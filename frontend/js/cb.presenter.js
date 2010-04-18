@@ -21,6 +21,9 @@ cb.Presenter = Class.extend({
     this.canvas_width = 600;
     this.canvas_height = 400;
     this.layers = 0;
+    this.brushes = {};
+    this.currentbrush = null;
+    this.currentlayer = null;
 
     var body = $('body');
     body.empty();
@@ -68,20 +71,60 @@ cb.Presenter = Class.extend({
     this.layer_box.text('Layer box');
     this.panel_box.append(this.layer_box);
   
-    this.base_layer = $('<canvas class="center" style="margin: 0 auto; display: block; width: 600px;" />');
+    this.base_layer = $('<canvas />');
     this.base_layer.attr('width', this.canvas_width)
-                   .attr('height', this.canvas_height);
+                   .attr('height', this.canvas_height)
+                   .css('position', 'absolute')
+                   .css('left', '0')
+                   .css('top', '0')
+                   .css('z-index', 0);
     var base_canvas = this.base_layer.get(0);
     cb.util.fillCanvas(base_canvas, '#fff');
     cb.util.drawGrid(base_canvas, 5, '#eee');
     cb.util.drawGrid(base_canvas, 50, '#ccc');
     this.canvas_box.append(this.base_layer);
+    
+    this.tool_layer = $('<canvas />');
+    this.tool_layer.attr('width', this.canvas_width)
+                   .attr('height', this.canvas_height)
+                   .css('position', 'absolute')
+                   .css('left', '0')
+                   .css('top', '0')
+                   .css('z-index', 100);
+    this.canvas_box.append(this.tool_layer);
+    
+    var myself = this;
+    this.tool_layer.bind('mousedown', function(evt) {
+      myself._onToolMouseDown(evt);
+    });
+    this.tool_layer.bind('mousemove', function(evt) {
+      myself._onToolMouseMove(evt);
+    });
+    $(window).bind('mouseup', function(evt) {
+      myself._onToolMouseUp(evt);
+    });
+    $(document).bind('selectstart', function() { return false; });
   },
   _getLayer: function(layer) {
     return $('#layer_box .layer[layer="' + layer + '"]');
   },
   _getCanvas: function(layer) {
     return $('#canvas_box canvas[layer="' + layer + '"]');
+  },
+  _onToolMouseDown: function(evt) {
+    if (this.currentbrush) {
+      this.currentbrush.onMouseDown(evt, this.currentlayer);
+    }
+  },
+  _onToolMouseUp: function(evt) {
+    if (this.currentbrush) {
+      this.currentbrush.onMouseUp(evt, this.currentlayer);
+    }
+  },
+  _onToolMouseMove: function(evt) {
+    if (this.currentbrush) {
+      this.currentbrush.onMouseMove(evt, this.currentlayer);
+    }
   },
   addLayer: function() {
     this.layers++;
@@ -90,10 +133,23 @@ cb.Presenter = Class.extend({
               .attr('height', this.canvas_height)
               .css('position', 'absolute')
               .css('left', '0')
-              .css('top', '0');
+              .css('top', '0')
+              .css('z-index', this.layers);
     var dom_layer = $('<div class="layer" layer="' + this.layers + '"></div>');
     dom_layer.text("Layer " + this.layers);
     this.canvas_box.append(dom_canvas);
     this.layer_box.append(dom_layer);
+    this.currentlayer = dom_canvas;
+  },
+  addBrush: function(name, brush) {
+    this.brushes[name] = brush;
+  },
+  selectBrush: function(name) {
+    if (name == null) {
+      this.currentbrush = null;
+    } else if (this.brushes.hasOwnProperty(name)) {
+      console.log('setting current brush', name, this.brushes[name]);
+      this.currentbrush = this.brushes[name];
+    } 
   }
 });

@@ -40,3 +40,15 @@ cb.util.drawGrid = function(canvas, step, color) {
   context.stroke();
   context.beginPath();
 };
+
+cb.util.paintPixel = function(canvas, x, y, pixel_size, color) {
+  var block_x = Math.floor(x / pixel_size);
+  var block_y = Math.floor(y / pixel_size);
+  var context = canvas.getContext('2d');    
+  context.beginPath();
+  context.fillStyle = color;
+  context.fillRect(Math.round(block_x * pixel_size), 
+                   Math.round(block_y * pixel_size), 
+                   pixel_size, 
+                   pixel_size);
+};

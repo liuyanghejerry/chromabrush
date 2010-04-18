@@ -20,11 +20,14 @@ cb.Brush = Class.extend({
   init: function() {
     
   },
-  onMouseDown: function() {
-    console.log('cb.Brush.onMouseDown');
+  onMouseDown: function(evt, layer) {
+    console.log('cb.Brush.onMouseDown', evt, layer);
   },
-  onMouseUp: function() {
-    console.log('cb.Brush.onMouseUp');
+  onMouseUp: function(evt, layer) {
+    console.log('cb.Brush.onMouseUp', evt, layer);
+  },
+  onMouseMove: function(evt, layer) {
+    //console.log('cb.Brush.onMouseMove', evt, layer);
   }
 });
 
@@ -32,10 +35,26 @@ cb.Brush = Class.extend({
 
 cb.PencilBrush = cb.Brush.extend({
   init: function() {
-    
+    this.drawing = false;
   },
-  onMouseDown: function() {
-    console.log('cb.PencilBrush.onMouseDown');
-    this._super();
+  paint: function(evt, layer) {
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    var canvas = layer.get(0);
+    if (canvas) {
+      cb.util.paintPixel(canvas, x, y, 5, '#36b');
+    }
+  },
+  onMouseDown: function(evt, layer) {
+    this.drawing = true;
+    this.paint(evt, layer);
+  },
+  onMouseUp: function(evt, layer) {
+    this.drawing = false;
+  },
+  onMouseMove: function(evt, layer) {
+    if (this.drawing) {
+      this.paint(evt, layer);
+    }
   }
 });

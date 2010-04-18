@@ -30,8 +30,8 @@
         presenter.addLayer();
         
         var pencilBrush = new cb.PencilBrush();
-        pencilBrush.onMouseDown();
-        pencilBrush.onMouseUp();
+        presenter.addBrush('pencil', pencilBrush);
+        presenter.selectBrush('pencil');
       };
     </script>
   </head>
