@@ -29,9 +29,13 @@
         presenter.addLayer();
         presenter.addLayer();
         
-        var pencilBrush = new cb.PencilBrush();
+        var pencilBrush = new cb.PencilBrush(presenter);
         presenter.addBrush('pencil', pencilBrush);
-        presenter.selectBrush('pencil');
+        //presenter.selectBrush('pencil');
+
+        var lineBrush = new cb.LineBrush(presenter);
+        presenter.addBrush('line', lineBrush);
+        presenter.selectBrush('line');
       };
     </script>
   </head>

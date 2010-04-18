@@ -52,3 +52,71 @@ cb.util.paintPixel = function(canvas, x, y, pixel_size, color) {
                    pixel_size, 
                    pixel_size);
 };
+
+cb.util.paintMarker = function(canvas, x, y, pixel_size, color) {
+  var bx = Math.floor(x / pixel_size) * pixel_size;
+  var by = Math.floor(y / pixel_size) * pixel_size;
+  var context = canvas.getContext('2d');    
+  context.beginPath();
+  context.strokeStyle = color;
+  context.moveTo(bx, by);
+  context.lineTo(bx + pixel_size - 1, by + pixel_size - 1);
+  context.moveTo(bx + pixel_size - 1, by);
+  context.lineTo(bx, by + pixel_size - 1);
+  context.stroke();
+};
+
+cb.util.clearLayer = function(canvas) {
+  var context = canvas.getContext('2d');    
+  context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+cb.util.paintToolLine = function(canvas, x0, y0, x1, y1, pixel_size, color) {
+  var start_x = Math.floor(x0 / pixel_size) * pixel_size + pixel_size / 2.0;
+  var start_y = Math.floor(y0 / pixel_size) * pixel_size + pixel_size / 2.0;
+  var end_x = Math.floor(x1 / pixel_size) * pixel_size + pixel_size / 2.0;
+  var end_y = Math.floor(y1 / pixel_size) * pixel_size + pixel_size / 2.0;
+
+  var context = canvas.getContext('2d');    
+  context.beginPath();
+  context.strokeStyle = color;
+  context.moveTo(start_x, start_y);
+  context.lineTo(end_x, end_y);
+  context.stroke();
+}
+
+cb.util.erasePixel = function(canvas, x, y, pixel_size, color) {
+  var block_x = Math.floor(x / pixel_size);
+  var block_y = Math.floor(y / pixel_size);
+  var context = canvas.getContext('2d');    
+  context.beginPath();
+  context.clearRect(Math.round(block_x * pixel_size), 
+                    Math.round(block_y * pixel_size), 
+                    pixel_size, 
+                    pixel_size);
+};
+
+cb.util.paintLine = function(canvas, x0, y0, x1, y1, pixel_size, color) {
+  var delta_x = x1 >= x0 ? 1 : -1;
+  var delta_y = y1 >= y0 ? 1 : -1;
+  var distance_x = (x1 - x0) * delta_x;
+  var distance_y = (y1 - y0) * delta_y;
+  if (distance_x > distance_y) {
+    var slope = distance_y / distance_x;
+    for (var i = 0; i < distance_x; i++) {
+      cb.util.paintPixel(canvas,
+                         x0 + delta_x * i,
+                         y0 + Math.floor(slope * delta_y * i),
+                         pixel_size, color);
+    }
+  } else {
+    var slope = distance_x / distance_y;
+    for (var i = 0; i < distance_y; i++) {
+      cb.util.paintPixel(canvas,
+                         x0 + Math.floor(slope * delta_x * i),
+                         y0 + delta_y * i,
+                         pixel_size, color);
+    }
+  }
+  cb.util.paintPixel(canvas, x1, y1, pixel_size, color);
+};

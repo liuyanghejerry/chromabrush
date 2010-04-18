@@ -16,6 +16,8 @@
 
 var cb = cb || {};
 
+cb.PixelSize = 5;
+
 cb.Presenter = Class.extend({
   init: function() {
     this.canvas_width = 600;
@@ -80,8 +82,8 @@ cb.Presenter = Class.extend({
                    .css('z-index', 0);
     var base_canvas = this.base_layer.get(0);
     cb.util.fillCanvas(base_canvas, '#fff');
-    cb.util.drawGrid(base_canvas, 5, '#eee');
-    cb.util.drawGrid(base_canvas, 50, '#ccc');
+    cb.util.drawGrid(base_canvas, cb.PixelSize, '#eee');
+    cb.util.drawGrid(base_canvas, cb.PixelSize * 10, '#ccc');
     this.canvas_box.append(this.base_layer);
     
     this.tool_layer = $('<canvas />');

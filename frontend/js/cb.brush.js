@@ -31,8 +31,6 @@ cb.Brush = Class.extend({
   }
 });
 
-
-
 cb.PencilBrush = cb.Brush.extend({
   init: function() {
     this.drawing = false;
@@ -42,7 +40,7 @@ cb.PencilBrush = cb.Brush.extend({
     var y = evt.offsetY || evt.pageY - canvas.offsetTop;
     var canvas = layer.get(0);
     if (canvas) {
-      cb.util.paintPixel(canvas, x, y, 5, '#36b');
+      cb.util.paintPixel(canvas, x, y, cb.PixelSize, '#36b');
     }
   },
   onMouseDown: function(evt, layer) {
@@ -58,3 +56,38 @@ cb.PencilBrush = cb.Brush.extend({
     }
   }
 });
+
+cb.LineBrush = cb.Brush.extend({
+  init: function(presenter) {
+    this.presenter = presenter;
+    this.startX = this.startY = null;
+  },
+  onMouseUp: function(evt, layer) {
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    if (this.startX) {
+      // Draw a line.
+      cb.util.clearLayer(this.presenter.tool_layer.get(0));
+      cb.util.paintLine(layer.get(0),
+          this.startX, this.startY, x, y, cb.PixelSize, '#36b');
+      if (!evt.shiftKey) {
+        // End of line.
+        this.startX = this.startY = null;
+        return;
+      }
+    }
+
+    this.startX = x;
+    this.startY = y;
+  },
+  onMouseMove: function(evt, layer) {
+    if (!this.startX) { return; }
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    var canvas = this.presenter.tool_layer.get(0);
+    cb.util.clearLayer(canvas);
+    cb.util.paintToolLine(canvas,
+        this.startX, this.startY, x, y, cb.PixelSize, '#c48');
+  }
+});
+
