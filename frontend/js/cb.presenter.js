@@ -61,8 +61,7 @@ cb.Presenter = Class.extend({
                    .css('overflow', 'hidden');
     canvas_wrap.append(this.canvas_box);
   
-    this.brush_box = $('<div class="box boxFlex0" id="brush_box"></div>');
-    this.brush_box.text('Brush box');
+    this.brush_box = $('<div class="hbox boxFlex0" id="brush_box"></div>');
     vbox2.append(this.brush_box);
   
     this.panel_box = $('<div class="box boxFlex0" id="panel_box"></div>');
@@ -145,12 +144,27 @@ cb.Presenter = Class.extend({
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
+    var brush_selection = $('<div class="box" />');
+    brush_selection.attr('id', 'brush_select_' + name)
+                   .text(name)
+                   .css('color', 'gray');
+    var myself = this;
+    brush_selection.bind('click', function(evt) {
+      myself.selectBrush(name);
+    });
+    this.brush_box.append(brush_selection);
   },
   selectBrush: function(name) {
+    if (this.currentbrush) {
+      this.brush_box.children().css('color', 'gray');
+      this.currentbrush.reset();
+    }
+
     if (name == null) {
       this.currentbrush = null;
     } else if (this.brushes.hasOwnProperty(name)) {
       console.log('setting current brush', name, this.brushes[name]);
+      this.brush_box.find('#brush_select_' + name).css('color', 'black');
       this.currentbrush = this.brushes[name];
     } 
   }

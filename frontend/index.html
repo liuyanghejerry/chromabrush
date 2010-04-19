@@ -29,13 +29,11 @@
         presenter.addLayer();
         presenter.addLayer();
         
-        var pencilBrush = new cb.PencilBrush(presenter);
-        presenter.addBrush('pencil', pencilBrush);
-        //presenter.selectBrush('pencil');
-
-        var lineBrush = new cb.LineBrush(presenter);
-        presenter.addBrush('line', lineBrush);
-        presenter.selectBrush('line');
+        presenter.addBrush('pencil', new cb.PencilBrush(presenter));
+        presenter.addBrush('pen', new cb.PenBrush(presenter));
+        presenter.addBrush('eraser', new cb.EraserBrush(presenter));
+        presenter.addBrush('line', new cb.LineBrush(presenter));
+        presenter.selectBrush('pencil');
       };
     </script>
   </head>

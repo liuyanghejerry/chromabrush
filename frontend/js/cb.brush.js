@@ -20,6 +20,8 @@ cb.Brush = Class.extend({
   init: function() {
     
   },
+  reset: function() {
+  },
   onMouseDown: function(evt, layer) {
     console.log('cb.Brush.onMouseDown', evt, layer);
   },
@@ -33,6 +35,9 @@ cb.Brush = Class.extend({
 
 cb.PencilBrush = cb.Brush.extend({
   init: function() {
+    this.drawing = false;
+  },
+  reset: function() {
     this.drawing = false;
   },
   paint: function(evt, layer) {
@@ -57,9 +62,71 @@ cb.PencilBrush = cb.Brush.extend({
   }
 });
 
+cb.PenBrush = cb.Brush.extend({
+  init: function() {
+    this.startX = this.startY = null;
+  },
+  reset: function() {
+    this.startX = this.startY = null;
+  },
+  onMouseDown: function(evt, layer) {
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    cb.util.paintPixel(layer.get(0), x, y, cb.PixelSize, '#36b');
+    this.previousX = x;
+    this.previousY = y;
+  },
+  onMouseUp: function(evt, layer) {
+    this.previousX = this.previousY = null;
+  },
+  onMouseMove: function(evt, layer) {
+    if (!this.previousX) { return; }
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    cb.util.paintLine(layer.get(0),
+        this.previousX, this.previousY, x, y, cb.PixelSize, '#36b');
+    this.previousX = x;
+    this.previousY = y;
+  }
+});
+
+cb.EraserBrush = cb.Brush.extend({
+  init: function() {
+    this.drawing = false;
+  },
+  reset: function() {
+    this.drawing = false;
+  },
+  paint: function(evt, layer) {
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    var canvas = layer.get(0);
+    if (canvas) {
+      cb.util.erasePixel(canvas, x, y, cb.PixelSize, '#36b');
+    }
+  },
+  onMouseDown: function(evt, layer) {
+    this.drawing = true;
+    this.paint(evt, layer);
+  },
+  onMouseUp: function(evt, layer) {
+    this.drawing = false;
+  },
+  onMouseMove: function(evt, layer) {
+    if (this.drawing) {
+      this.paint(evt, layer);
+    }
+  }
+});
+
 cb.LineBrush = cb.Brush.extend({
   init: function(presenter) {
     this.presenter = presenter;
+    this.startX = this.startY = null;
+  },
+  reset: function() {
+    var canvas = this.presenter.tool_layer.get(0);
+    cb.util.clearLayer(canvas);
     this.startX = this.startY = null;
   },
   onMouseUp: function(evt, layer) {
@@ -76,7 +143,6 @@ cb.LineBrush = cb.Brush.extend({
         return;
       }
     }
-
     this.startX = x;
     this.startY = y;
   },
