@@ -21,6 +21,7 @@ cb.Brush = Class.extend({
     
   },
   reset: function() {
+    this.init();
   },
   onMouseDown: function(evt, layer) {
     console.log('cb.Brush.onMouseDown', evt, layer);
@@ -35,9 +36,6 @@ cb.Brush = Class.extend({
 
 cb.PencilBrush = cb.Brush.extend({
   init: function() {
-    this.drawing = false;
-  },
-  reset: function() {
     this.drawing = false;
   },
   paint: function(evt, layer) {
@@ -66,9 +64,6 @@ cb.PenBrush = cb.Brush.extend({
   init: function() {
     this.startX = this.startY = null;
   },
-  reset: function() {
-    this.startX = this.startY = null;
-  },
   onMouseDown: function(evt, layer) {
     var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
     var y = evt.offsetY || evt.pageY - canvas.offsetTop;
@@ -92,9 +87,6 @@ cb.PenBrush = cb.Brush.extend({
 
 cb.EraserBrush = cb.Brush.extend({
   init: function() {
-    this.drawing = false;
-  },
-  reset: function() {
     this.drawing = false;
   },
   paint: function(evt, layer) {
@@ -132,10 +124,15 @@ cb.LineBrush = cb.Brush.extend({
   onMouseUp: function(evt, layer) {
     var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
     var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    var canvas = layer.get(0);
+    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+      return;
+    }
+
     if (this.startX) {
       // Draw a line.
       cb.util.clearLayer(this.presenter.tool_layer.get(0));
-      cb.util.paintLine(layer.get(0),
+      cb.util.paintLine(canvas,
           this.startX, this.startY, x, y, cb.PixelSize, '#36b');
       if (!evt.shiftKey) {
         // End of line.
@@ -155,5 +152,17 @@ cb.LineBrush = cb.Brush.extend({
     cb.util.paintToolLine(canvas,
         this.startX, this.startY, x, y, cb.PixelSize, '#c48');
   }
+});
+
+cb.FillBrush = cb.Brush.extend({
+  onMouseUp: function(evt, layer) {
+    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
+    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+    var canvas = layer.get(0);
+    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+      return;
+    }
+    cb.util.fillLayer(canvas, x, y, cb.PixelSize, '#4c8');
+  },
 });
 
