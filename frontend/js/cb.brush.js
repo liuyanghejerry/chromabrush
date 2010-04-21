@@ -121,7 +121,7 @@ cb.LineBrush = cb.Brush.extend({
     cb.util.clearLayer(canvas);
     this.startX = this.startY = null;
   },
-  onMouseUp: function(evt, layer) {
+  onMouseDown: function(evt, layer) {
     var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
     var y = evt.offsetY || evt.pageY - canvas.offsetTop;
     var canvas = layer.get(0);
@@ -155,7 +155,7 @@ cb.LineBrush = cb.Brush.extend({
 });
 
 cb.FillBrush = cb.Brush.extend({
-  onMouseUp: function(evt, layer) {
+  onMouseDown: function(evt, layer) {
     var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
     var y = evt.offsetY || evt.pageY - canvas.offsetTop;
     var canvas = layer.get(0);
