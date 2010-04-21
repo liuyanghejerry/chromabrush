@@ -22,10 +22,10 @@ cb.Presenter = Class.extend({
   init: function() {
     this.canvas_width = 600;
     this.canvas_height = 400;
-    this.layers = 0;
+    this.layers = [];
     this.brushes = {};
     this.currentbrush = null;
-    this.currentlayer = null;
+    this.currentlayer = -1;
 
     var body = $('body');
     body.empty();
@@ -84,18 +84,14 @@ cb.Presenter = Class.extend({
     cb.util.drawGrid(base_canvas, cb.PixelSize, '#eee');
     cb.util.drawGrid(base_canvas, cb.PixelSize * 10, '#ccc');
     this.canvas_box.append(this.base_layer);
-    
-    this.tool_layer = $('<canvas />');
-    this.tool_layer.attr('width', this.canvas_width)
-                   .attr('height', this.canvas_height)
-                   .css('position', 'absolute')
-                   .css('left', '0')
-                   .css('top', '0')
-                   .css('z-index', 100);
-    this.canvas_box.append(this.tool_layer);
+
+    this.tool_layer = new cb.Layer(this.canvas_width, 
+                                   this.canvas_height, 
+                                   100);
+    this.canvas_box.append(this.tool_layer.getCanvas());
     
     var myself = this;
-    this.tool_layer.bind('mousedown', function(evt) {
+    $(this.tool_layer.getCanvas()).bind('mousedown', function(evt) {
       myself._onToolMouseDown(evt);
     });
     $(window).bind('mousemove', function(evt) {
@@ -106,11 +102,12 @@ cb.Presenter = Class.extend({
     });
     $(document).bind('selectstart', function() { return false; });
   },
-  _getLayer: function(layer) {
-    return $('#layer_box .layer[layer="' + layer + '"]');
-  },
-  _getCanvas: function(layer) {
-    return $('#canvas_box canvas[layer="' + layer + '"]');
+  _getCurrentLayer: function() {
+    if (this.currentlayer > -1) {
+      return this.layers[this.currentlayer];
+    } else {
+      return null;
+    }
   },
   _getRelativeMousePos: function(evt, elem) {
     var offset = $(elem).offset();
@@ -121,36 +118,34 @@ cb.Presenter = Class.extend({
   },
   _onToolMouseDown: function(evt) {
     if (this.currentbrush) {
-      var pos = this._getRelativeMousePos(evt, this.tool_layer);
-      this.currentbrush.onMouseDown(pos.x, pos.y, this.currentlayer, evt);
+      var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
+      this.currentbrush.onMouseDown(pos.x, pos.y, this._getCurrentLayer(), evt);
     }
   },
   _onToolMouseUp: function(evt) {
     if (this.currentbrush) {
-      var pos = this._getRelativeMousePos(evt, this.tool_layer);
-      this.currentbrush.onMouseUp(pos.x, pos.y, this.currentlayer, evt);
+      var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
+      this.currentbrush.onMouseUp(pos.x, pos.y, this._getCurrentLayer(), evt);
     }
   },
   _onToolMouseMove: function(evt) {
     if (this.currentbrush) {
-      var pos = this._getRelativeMousePos(evt, this.tool_layer);
-      this.currentbrush.onMouseMove(pos.x, pos.y, this.currentlayer, evt);
+      var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
+      this.currentbrush.onMouseMove(pos.x, pos.y, this._getCurrentLayer(), evt);
     }
   },
   addLayer: function() {
-    this.layers++;
-    var dom_canvas = $('<canvas layer="' + this.layers + '"></canvas>');
-    dom_canvas.attr('width', this.canvas_width)
-              .attr('height', this.canvas_height)
-              .css('position', 'absolute')
-              .css('left', '0')
-              .css('top', '0')
-              .css('z-index', this.layers);
-    var dom_layer = $('<div class="layer" layer="' + this.layers + '"></div>');
-    dom_layer.text("Layer " + this.layers);
-    this.canvas_box.append(dom_canvas);
+    var layer_index = this.layers.length;
+    var layer = new cb.Layer(this.canvas_width, 
+                             this.canvas_height, 
+                             layer_index);
+    this.layers.push(layer);
+    this.canvas_box.append(layer.getCanvas());
+    
+    var dom_layer = $('<div class="layer" layer="' + layer_index + '"></div>');
+    dom_layer.text("Layer " + layer_index);
     this.layer_box.append(dom_layer);
-    this.currentlayer = dom_canvas;
+    this.currentlayer = layer_index;
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
