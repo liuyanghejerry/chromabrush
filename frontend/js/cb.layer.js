@@ -143,6 +143,21 @@ cb.Layer = Class.extend({
       fillLine(x, y);
     }
   },
+  paintGrid: function(step, color) {
+    var context = this.getContext();
+    console.log(this.width, this.height);
+    for (var x = 0.5; x <= this.width; x += step) {
+      context.moveTo(x, 0);
+      context.lineTo(x, this.height);
+    }
+    for (var y = 0.5; y <= this.height; y += step) {
+      context.moveTo(0, y);
+      context.lineTo(this.width, y);
+    }
+    context.strokeStyle = color;
+    context.stroke();
+    context.beginPath();
+  },
   paintLine: function(x0, y0, x1, y1, pixel_size, color) {
     var delta_x = x1 >= x0 ? 1 : -1;
     var delta_y = y1 >= y0 ? 1 : -1;

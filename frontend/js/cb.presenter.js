@@ -71,23 +71,14 @@ cb.Presenter = Class.extend({
     this.layer_box = $('<div class="panel" id="layer_box"></div>');
     this.layer_box.text('Layer box');
     this.panel_box.append(this.layer_box);
-  
-    this.base_layer = $('<canvas />');
-    this.base_layer.attr('width', this.canvas_width)
-                   .attr('height', this.canvas_height)
-                   .css('position', 'absolute')
-                   .css('left', '0')
-                   .css('top', '0')
-                   .css('z-index', 0);
-    var base_canvas = this.base_layer.get(0);
-    cb.util.fillCanvas(base_canvas, '#fff');
-    cb.util.drawGrid(base_canvas, cb.PixelSize, '#eee');
-    cb.util.drawGrid(base_canvas, cb.PixelSize * 10, '#ccc');
-    this.canvas_box.append(this.base_layer);
+    
+    this.base_layer = new cb.Layer(this.canvas_width, this.canvas_height, 0);
+    this.base_layer.fill('#fff');
+    this.base_layer.paintGrid(cb.PixelSize, '#eee');
+    this.base_layer.paintGrid(cb.PixelSize * 10, '#ccc');
+    this.canvas_box.append(this.base_layer.getCanvas());
 
-    this.tool_layer = new cb.Layer(this.canvas_width, 
-                                   this.canvas_height, 
-                                   100);
+    this.tool_layer = new cb.Layer(this.canvas_width, this.canvas_height, 100);
     this.canvas_box.append(this.tool_layer.getCanvas());
     
     var myself = this;
