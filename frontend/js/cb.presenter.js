@@ -98,7 +98,7 @@ cb.Presenter = Class.extend({
     this.tool_layer.bind('mousedown', function(evt) {
       myself._onToolMouseDown(evt);
     });
-    this.tool_layer.bind('mousemove', function(evt) {
+    $(window).bind('mousemove', function(evt) {
       myself._onToolMouseMove(evt);
     });
     $(window).bind('mouseup', function(evt) {
@@ -112,19 +112,29 @@ cb.Presenter = Class.extend({
   _getCanvas: function(layer) {
     return $('#canvas_box canvas[layer="' + layer + '"]');
   },
+  _getRelativeMousePos: function(evt, elem) {
+    var offset = $(elem).offset();
+    return {
+      'x' : evt.pageX - offset.left,
+      'y' : evt.pageY - offset.top
+    };
+  },
   _onToolMouseDown: function(evt) {
     if (this.currentbrush) {
-      this.currentbrush.onMouseDown(evt, this.currentlayer);
+      var pos = this._getRelativeMousePos(evt, this.tool_layer);
+      this.currentbrush.onMouseDown(pos.x, pos.y, this.currentlayer, evt);
     }
   },
   _onToolMouseUp: function(evt) {
     if (this.currentbrush) {
-      this.currentbrush.onMouseUp(evt, this.currentlayer);
+      var pos = this._getRelativeMousePos(evt, this.tool_layer);
+      this.currentbrush.onMouseUp(pos.x, pos.y, this.currentlayer, evt);
     }
   },
   _onToolMouseMove: function(evt) {
     if (this.currentbrush) {
-      this.currentbrush.onMouseMove(evt, this.currentlayer);
+      var pos = this._getRelativeMousePos(evt, this.tool_layer);
+      this.currentbrush.onMouseMove(pos.x, pos.y, this.currentlayer, evt);
     }
   },
   addLayer: function() {

@@ -17,45 +17,35 @@
 var cb = cb || {};
 
 cb.Brush = Class.extend({
-  init: function() {
-    
-  },
+  init: function() {},
   reset: function() {
     this.init();
   },
-  onMouseDown: function(evt, layer) {
-    console.log('cb.Brush.onMouseDown', evt, layer);
-  },
-  onMouseUp: function(evt, layer) {
-    console.log('cb.Brush.onMouseUp', evt, layer);
-  },
-  onMouseMove: function(evt, layer) {
-    //console.log('cb.Brush.onMouseMove', evt, layer);
-  }
+  onMouseDown: function(x, y, layer, evt) {},
+  onMouseUp: function(x, y, layer, evt) {},
+  onMouseMove: function(x, y, layer, evt) {}
 });
 
 cb.PencilBrush = cb.Brush.extend({
   init: function() {
     this.drawing = false;
   },
-  paint: function(evt, layer) {
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+  paint: function(x, y, layer) {
     var canvas = layer.get(0);
     if (canvas) {
       cb.util.paintPixel(canvas, x, y, cb.PixelSize, '#36b');
     }
   },
-  onMouseDown: function(evt, layer) {
+  onMouseDown: function(x, y, layer, evt) {
     this.drawing = true;
-    this.paint(evt, layer);
+    this.paint(x, y, layer);
   },
-  onMouseUp: function(evt, layer) {
+  onMouseUp: function(x, y, layer, evt) {
     this.drawing = false;
   },
-  onMouseMove: function(evt, layer) {
+  onMouseMove: function(x, y, layer, evt) {
     if (this.drawing) {
-      this.paint(evt, layer);
+      this.paint(x, y, layer);
     }
   }
 });
@@ -64,20 +54,16 @@ cb.PenBrush = cb.Brush.extend({
   init: function() {
     this.startX = this.startY = null;
   },
-  onMouseDown: function(evt, layer) {
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+  onMouseDown: function(x, y, layer, evt) {
     cb.util.paintPixel(layer.get(0), x, y, cb.PixelSize, '#36b');
     this.previousX = x;
     this.previousY = y;
   },
-  onMouseUp: function(evt, layer) {
+  onMouseUp: function(x, y, layer, evt) {
     this.previousX = this.previousY = null;
   },
-  onMouseMove: function(evt, layer) {
+  onMouseMove: function(x, y, layer, evt) {
     if (!this.previousX) { return; }
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
     cb.util.paintLine(layer.get(0),
         this.previousX, this.previousY, x, y, cb.PixelSize, '#36b');
     this.previousX = x;
@@ -89,24 +75,22 @@ cb.EraserBrush = cb.Brush.extend({
   init: function() {
     this.drawing = false;
   },
-  paint: function(evt, layer) {
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+  paint: function(x, y, layer) {
     var canvas = layer.get(0);
     if (canvas) {
       cb.util.erasePixel(canvas, x, y, cb.PixelSize, '#36b');
     }
   },
-  onMouseDown: function(evt, layer) {
+  onMouseDown: function(x, y, layer, evt) {
     this.drawing = true;
-    this.paint(evt, layer);
+    this.paint(x, y, layer);
   },
-  onMouseUp: function(evt, layer) {
+  onMouseUp: function(x, y, layer, evt) {
     this.drawing = false;
   },
-  onMouseMove: function(evt, layer) {
+  onMouseMove: function(x, y, layer, evt) {
     if (this.drawing) {
-      this.paint(evt, layer);
+      this.paint(x, y, layer);
     }
   }
 });
@@ -121,9 +105,7 @@ cb.LineBrush = cb.Brush.extend({
     cb.util.clearLayer(canvas);
     this.startX = this.startY = null;
   },
-  onMouseDown: function(evt, layer) {
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+  onMouseDown: function(x, y, layer, evt) {
     var canvas = layer.get(0);
     if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
       return;
@@ -143,10 +125,8 @@ cb.LineBrush = cb.Brush.extend({
     this.startX = x;
     this.startY = y;
   },
-  onMouseMove: function(evt, layer) {
+  onMouseMove: function(x, y, layer, evt) {
     if (!this.startX) { return; }
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
     var canvas = this.presenter.tool_layer.get(0);
     cb.util.clearLayer(canvas);
     cb.util.paintToolLine(canvas,
@@ -155,9 +135,7 @@ cb.LineBrush = cb.Brush.extend({
 });
 
 cb.FillBrush = cb.Brush.extend({
-  onMouseDown: function(evt, layer) {
-    var x = evt.offsetX || evt.pageX - canvas.offsetLeft;
-    var y = evt.offsetY || evt.pageY - canvas.offsetTop;
+  onMouseDown: function(x, y, layer, evt) {
     var canvas = layer.get(0);
     if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
       return;
