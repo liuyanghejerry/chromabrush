@@ -21,6 +21,9 @@ cb.Brush = Class.extend({
   reset: function() {
     this.init();
   },
+  setPresenter: function(presenter) {
+    this.presenter = presenter;
+  },
   onMouseDown: function(x, y, layer, evt) {},
   onMouseUp: function(x, y, layer, evt) {},
   onMouseMove: function(x, y, layer, evt) {}
@@ -30,17 +33,17 @@ cb.PencilBrush = cb.Brush.extend({
   init: function() {
     this.drawing = false;
   },
-  onMouseDown: function(x, y, presenter, evt) {
+  onMouseDown: function(x, y, evt) {
     this.drawing = true;
-    var layer = presenter.getCurrentLayer();
+    var layer = this.presenter.getCurrentLayer();
     layer.paintPixel(x, y, cb.PixelSize, '#36b');
   },
-  onMouseUp: function(x, y, presenter, evt) {
+  onMouseUp: function(x, y, evt) {
     this.drawing = false;
   },
-  onMouseMove: function(x, y, presenter, evt) {
+  onMouseMove: function(x, y, evt) {
     if (this.drawing) {
-      var layer = presenter.getCurrentLayer();
+      var layer = this.presenter.getCurrentLayer();
       layer.paintPixel(x, y, cb.PixelSize, '#36b');
     }
   }
@@ -50,8 +53,8 @@ cb.PenBrush = cb.Brush.extend({
   init: function() {
     this.startX = this.startY = null;
   },
-  onMouseDown: function(x, y, presenter, evt) {
-    var layer = presenter.getCurrentLayer();
+  onMouseDown: function(x, y, evt) {
+    var layer = this.presenter.getCurrentLayer();
     layer.paintPixel(x, y, cb.PixelSize, '#36b');
     this.previousX = x;
     this.previousY = y;
@@ -59,9 +62,9 @@ cb.PenBrush = cb.Brush.extend({
   onMouseUp: function(x, y, layer, evt) {
     this.previousX = this.previousY = null;
   },
-  onMouseMove: function(x, y, presenter, evt) {
+  onMouseMove: function(x, y, evt) {
     if (!this.previousX) { return; }
-    var layer = presenter.getCurrentLayer();
+    var layer = this.presenter.getCurrentLayer();
     layer.paintLine(this.previousX, this.previousY, x, y, cb.PixelSize, '#36b');
     this.previousX = x;
     this.previousY = y;
@@ -72,16 +75,16 @@ cb.EraserBrush = cb.Brush.extend({
   init: function() {
     this.drawing = false;
   },
-  onMouseDown: function(x, y, presenter, evt) {
+  onMouseDown: function(x, y, evt) {
     this.drawing = true;
     layer.erasePixel(x, y, cb.PixelSize * 4);
   },
-  onMouseUp: function(x, y, presenter, evt) {
+  onMouseUp: function(x, y, evt) {
     this.drawing = false;
   },
-  onMouseMove: function(x, y, presenter, evt) {
+  onMouseMove: function(x, y, evt) {
     if (this.drawing) {
-      var layer = presenter.getCurrentLayer();
+      var layer = this.presenter.getCurrentLayer();
       layer.erasePixel(x, y, cb.PixelSize * 4);
     }
   }
@@ -91,15 +94,15 @@ cb.LineBrush = cb.Brush.extend({
   init: function() {
     this.startX = this.startY = null;
   },
-  onMouseDown: function(x, y, presenter, evt) {
-    var layer = presenter.getCurrentLayer();
+  onMouseDown: function(x, y, evt) {
+    var layer = this.presenter.getCurrentLayer();
     if (x < 0 || x >= layer.width || y < 0 || y >= layer.height) {
       return;
     }
 
     if (this.startX) {
       // Draw a line.
-      presenter.getToolLayer().clear();
+      this.presenter.getToolLayer().clear();
       layer.paintLine(
           this.startX, 
           this.startY, 
@@ -117,10 +120,10 @@ cb.LineBrush = cb.Brush.extend({
     this.startX = x;
     this.startY = y;
   },
-  onMouseMove: function(x, y, presenter, evt) {
+  onMouseMove: function(x, y, evt) {
     if (!this.startX) { return; }
-    presenter.getToolLayer().clear();
-    presenter.getToolLayer().paintLine(
+    this.presenter.getToolLayer().clear();
+    this.presenter.getToolLayer().paintLine(
         this.startX, 
         this.startY, 
         x, 
@@ -131,12 +134,12 @@ cb.LineBrush = cb.Brush.extend({
 });
 
 cb.FillBrush = cb.Brush.extend({
-  onMouseDown: function(x, y, presenter, evt) {
-    var layer = presenter.getCurrentLayer();
+  onMouseDown: function(x, y, evt) {
+    var layer = this.presenter.getCurrentLayer();
     if (x < 0 || x >= layer.width || y < 0 || y >= layer.height) {
       return;
     }
     layer.paintFill(x, y, cb.PixelSize, '#4c8');
-  },
+  }
 });
 

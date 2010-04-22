@@ -166,6 +166,7 @@ cb.Presenter = Class.extend({
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
+    brush.setPresenter(this);
     var brush_selection = $('<div class="box" />');
     brush_selection.attr('id', 'brush_select_' + name)
                    .text(name)
