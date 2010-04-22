@@ -27,6 +27,8 @@ cb.Presenter = Class.extend({
     this.currentbrush = null;
     this.currentlayer = -1;
     var myself = this;
+    
+    $(window).bind('unload', $.proxy(this, '_cleanup'));
 
     var body = $('body');
     body.empty();
@@ -72,7 +74,7 @@ cb.Presenter = Class.extend({
     this.layer_box = $('<div class="panel" id="layer_box"></div>');
     this.layer_box.sortable({
       'axis' : 'y',
-      'update' : function() { myself._setLayerOrder(); }
+      'update' : $.proxy(this, '_setLayerOrder')
     });
     this.panel_box.append(this.layer_box);
     
@@ -85,16 +87,20 @@ cb.Presenter = Class.extend({
     this.tool_layer = new cb.Layer(this.canvas_width, this.canvas_height, 100);
     this.canvas_box.append(this.tool_layer.getCanvas());
     
-    $(this.tool_layer.getCanvas()).bind('mousedown', function(evt) {
-      myself._onToolMouseDown(evt);
-    });
-    $(window).bind('mousemove', function(evt) {
-      myself._onToolMouseMove(evt);
-    });
-    $(window).bind('mouseup', function(evt) {
-      myself._onToolMouseUp(evt);
-    });
+    $(this.tool_layer.getCanvas()).bind('mousedown', $.proxy(this, '_onToolMouseDown'));
+    $(window).bind('mousemove', $.proxy(this, '_onToolMouseMove'));
+    $(window).bind('mouseup', $.proxy(this, '_onToolMouseUp'));
     $(document).bind('selectstart', function() { return false; });
+  },
+  _cleanup: function(evt) {
+    
+    // Clean up brush references.
+    for (var name in this.brushes) {
+      if (this.brushes.hasOwnProperty(name)) {
+        this.brushes[name].setPresenter(null);
+        delete this.brushes[name];
+      }
+    }
   },
   _getRelativeMousePos: function(evt, elem) {
     var offset = $(elem).offset();
