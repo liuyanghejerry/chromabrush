@@ -118,13 +118,24 @@ cb.Presenter = Class.extend({
     };
   },
   _onDragOver: function(evt) {
-    var dt = evt.originalEvent.dataTransfer;
-    console.log('onDragOver', dt, evt);
     return false;
   },
   _onDrop: function(evt) {
-    var dt = evt.originalEvent.dataTransfer;
-    console.log('onDrop', dt, evt);
+    var files = evt.originalEvent.dataTransfer.files;
+    for (var i = 0; i < files.length; i++) {
+      console.log('file', files[i]);
+      var file = files[i];
+      var xhr = new XMLHttpRequest;
+      xhr.open('post', '/', true);
+      xhr.onreadystatechange = function () {
+        if (this.readyState != 4) { return; }
+        console.log('readystatechange', this, this.responseText);
+      };
+      xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+      xhr.setRequestHeader('X-File-Name', file.fileName);
+      xhr.setRequestHeader('X-File-Size', file.fileSize);
+      xhr.send(file);
+    }
     return false;
   },
   _onToolMouseDown: function(evt) {
