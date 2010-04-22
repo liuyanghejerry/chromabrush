@@ -164,7 +164,7 @@ cb.Presenter = Class.extend({
     });
     
     var myself = this;
-    dom_thumb.bind('click', function() {
+    dom_layer.bind('click', function() {
       myself.selectLayer(new_index);
     });
     
