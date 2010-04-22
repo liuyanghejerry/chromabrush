@@ -110,7 +110,7 @@ cb.LineBrush = cb.Brush.extend({
           y, 
           cb.PixelSize, 
           '#36b');
-
+      console.log(evt, evt.shiftKey);
       if (!evt.shiftKey) {
         // End of line.
         this.startX = this.startY = null;

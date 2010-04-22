@@ -96,6 +96,15 @@ cb.Presenter = Class.extend({
     $(window).bind('mousemove', $.proxy(this, '_onToolMouseMove'));
     $(window).bind('mouseup', $.proxy(this, '_onToolMouseUp'));
     $(document).bind('selectstart', function() { return false; });
+    $(this.tool_layer.getCanvas())
+        .bind('dragover', function(evt) {
+          console.log(evt);
+          return false;
+        })
+        .bind('drop', function(evt) {
+          console.log(evt);
+          return false;
+        });
   },
   _cleanup: function(evt) {
     
@@ -114,22 +123,26 @@ cb.Presenter = Class.extend({
       'y' : evt.pageY - offset.top
     };
   },
+  _onDrop: function(evt) {
+    console.log("Drop", evt);
+    return false;
+  },
   _onToolMouseDown: function(evt) {
     if (this.currentbrush) {
       var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
-      this.currentbrush.onMouseDown(pos.x, pos.y, this, evt);
+      this.currentbrush.onMouseDown(pos.x, pos.y, evt);
     }
   },
   _onToolMouseUp: function(evt) {
     if (this.currentbrush) {
       var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
-      this.currentbrush.onMouseUp(pos.x, pos.y, this, evt);
+      this.currentbrush.onMouseUp(pos.x, pos.y, evt);
     }
   },
   _onToolMouseMove: function(evt) {
     if (this.currentbrush) {
       var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
-      this.currentbrush.onMouseMove(pos.x, pos.y, this, evt);
+      this.currentbrush.onMouseMove(pos.x, pos.y, evt);
     }
   },
   _setLayerOrder: function() {
