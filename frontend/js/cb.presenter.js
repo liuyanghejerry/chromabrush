@@ -164,7 +164,7 @@ cb.Presenter = Class.extend({
     });
     
     var myself = this;
-    dom_layer.bind('click', function() {
+    dom_layer.bind('mousedown', function() {
       myself.selectLayer(new_index);
     });
     
