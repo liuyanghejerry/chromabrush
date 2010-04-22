@@ -71,6 +71,7 @@ cb.Presenter = Class.extend({
   
     this.layer_box = $('<div class="panel" id="layer_box"></div>');
     this.layer_box.sortable({
+      'axis' : 'y',
       'update' : function() { myself._setLayerOrder(); }
     });
     this.panel_box.append(this.layer_box);
@@ -136,24 +137,26 @@ cb.Presenter = Class.extend({
     });
   },
   addLayer: function() {
-    var layer_index = this.layers.length;
-    var layer = new cb.Layer(this.canvas_width, 
-                             this.canvas_height, 
-                             layer_index);
+    var new_index = this.layers.length;
+    var layer = new cb.Layer(this.canvas_width, this.canvas_height, new_index);
     this.layers.push(layer);
     this.canvas_box.append(layer.getCanvas());
     
     var thumb_width = 50;
     var thumb_height = (this.canvas_height / this.canvas_width) * thumb_width;
     var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
-    var dom_thumb = $('<img/>').attr('src', thumb_src)
-                               .css('width', thumb_width)
-                               .css('height', thumb_height);
+    var dom_thumb = $('<img/>')
+        .attr('src', thumb_src)
+        .css('width', thumb_width)
+        .css('height', thumb_height);
                                
-    var dom_layer = $('<div></div>').attr('class', 'layer')
-                                    .attr('layer', layer_index)
-                                    .append(dom_thumb)
-                                    .append("Layer " + layer_index);
+    var dom_layer = $('<div></div>')
+        .addClass('layer')
+        .addClass('hbox')
+        .css('line-height', thumb_height + 'px')
+        .attr('layer', new_index)
+        .append(dom_thumb)
+        .append('<span>Layer ' + new_index + '</span>');
     
     $(layer).bind('updated', function() { 
       var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
@@ -162,11 +165,11 @@ cb.Presenter = Class.extend({
     
     var myself = this;
     dom_thumb.bind('click', function() {
-      myself.selectLayer(layer_index);
-    })
+      myself.selectLayer(new_index);
+    });
     
     this.layer_box.prepend(dom_layer);
-    this.selectLayer(layer_index);
+    this.selectLayer(new_index);
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
