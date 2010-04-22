@@ -97,14 +97,8 @@ cb.Presenter = Class.extend({
     $(window).bind('mouseup', $.proxy(this, '_onToolMouseUp'));
     $(document).bind('selectstart', function() { return false; });
     $(this.tool_layer.getCanvas())
-        .bind('dragover', function(evt) {
-          console.log(evt);
-          return false;
-        })
-        .bind('drop', function(evt) {
-          console.log(evt);
-          return false;
-        });
+        .bind('dragover', $.proxy(this, '_onDragOver'))
+        .bind('drop', $.proxy(this, '_onDrop'));
   },
   _cleanup: function(evt) {
     
@@ -123,8 +117,14 @@ cb.Presenter = Class.extend({
       'y' : evt.pageY - offset.top
     };
   },
+  _onDragOver: function(evt) {
+    var dt = evt.originalEvent.dataTransfer;
+    console.log('onDragOver', dt, evt);
+    return false;
+  },
   _onDrop: function(evt) {
-    console.log("Drop", evt);
+    var dt = evt.originalEvent.dataTransfer;
+    console.log('onDrop', dt, evt);
     return false;
   },
   _onToolMouseDown: function(evt) {
