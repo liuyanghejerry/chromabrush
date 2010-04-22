@@ -96,13 +96,6 @@ cb.Presenter = Class.extend({
     });
     $(document).bind('selectstart', function() { return false; });
   },
-  _getCurrentLayer: function() {
-    if (this.currentlayer > -1) {
-      return this.layers[this.currentlayer];
-    } else {
-      return null;
-    }
-  },
   _getRelativeMousePos: function(evt, elem) {
     var offset = $(elem).offset();
     return {
@@ -113,19 +106,19 @@ cb.Presenter = Class.extend({
   _onToolMouseDown: function(evt) {
     if (this.currentbrush) {
       var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
-      this.currentbrush.onMouseDown(pos.x, pos.y, this._getCurrentLayer(), evt);
+      this.currentbrush.onMouseDown(pos.x, pos.y, this, evt);
     }
   },
   _onToolMouseUp: function(evt) {
     if (this.currentbrush) {
       var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
-      this.currentbrush.onMouseUp(pos.x, pos.y, this._getCurrentLayer(), evt);
+      this.currentbrush.onMouseUp(pos.x, pos.y, this, evt);
     }
   },
   _onToolMouseMove: function(evt) {
     if (this.currentbrush) {
       var pos = this._getRelativeMousePos(evt, this.tool_layer.getCanvas());
-      this.currentbrush.onMouseMove(pos.x, pos.y, this._getCurrentLayer(), evt);
+      this.currentbrush.onMouseMove(pos.x, pos.y, this, evt);
     }
   },
   _setLayerOrder: function() {
@@ -182,6 +175,16 @@ cb.Presenter = Class.extend({
       myself.selectBrush(name);
     });
     this.brush_box.append(brush_selection);
+  },
+  getCurrentLayer: function() {
+    if (this.currentlayer > -1) {
+      return this.layers[this.currentlayer];
+    } else {
+      return null;
+    }
+  },
+  getToolLayer: function() {
+    return this.tool_layer;
   },
   selectBrush: function(name) {
     if (this.currentbrush) {
