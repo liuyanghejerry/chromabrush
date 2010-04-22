@@ -15,6 +15,20 @@ body {
   height: 100%;
   overflow: hidden;
 }
-#layer_box {
-  
+.layer {
+  cursor: move;
+  padding: 7px;
+}
+.layer img {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+}
+.layer.selected {
+  padding: 4px;
+  border: 3px solid #36b;
+}
+
+.canvas-wrap {
+  background: #aaa;
 }

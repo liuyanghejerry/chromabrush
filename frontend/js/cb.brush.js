@@ -70,14 +70,14 @@ cb.EraserBrush = cb.Brush.extend({
   },
   onMouseDown: function(x, y, layer, evt) {
     this.drawing = true;
-    layer.erasePixel(x, y, cb.PixelSize);
+    layer.erasePixel(x, y, cb.PixelSize * 4);
   },
   onMouseUp: function(x, y, layer, evt) {
     this.drawing = false;
   },
   onMouseMove: function(x, y, layer, evt) {
     if (this.drawing) {
-      layer.erasePixel(x, y, cb.PixelSize);
+      layer.erasePixel(x, y, cb.PixelSize * 4);
     }
   }
 });

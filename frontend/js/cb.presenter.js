@@ -26,6 +26,7 @@ cb.Presenter = Class.extend({
     this.brushes = {};
     this.currentbrush = null;
     this.currentlayer = -1;
+    var myself = this;
 
     var body = $('body');
     body.empty();
@@ -48,7 +49,7 @@ cb.Presenter = Class.extend({
     var vbox2 = $('<div class="vbox boxFlex"></div>');
     hbox1.append(vbox2);
   
-    var canvas_wrap = $('<div class="box boxFlex vbox center"></div>');
+    var canvas_wrap = $('<div class="box boxFlex vbox center canvas-wrap"></div>');
     canvas_wrap.css('overflow', 'auto');
     vbox2.append(canvas_wrap);
     
@@ -69,7 +70,9 @@ cb.Presenter = Class.extend({
     hbox1.append(this.panel_box);
   
     this.layer_box = $('<div class="panel" id="layer_box"></div>');
-    this.layer_box.text('Layer box');
+    this.layer_box.sortable({
+      'update' : function() { myself._setLayerOrder(); }
+    });
     this.panel_box.append(this.layer_box);
     
     this.base_layer = new cb.Layer(this.canvas_width, this.canvas_height, 0);
@@ -81,7 +84,6 @@ cb.Presenter = Class.extend({
     this.tool_layer = new cb.Layer(this.canvas_width, this.canvas_height, 100);
     this.canvas_box.append(this.tool_layer.getCanvas());
     
-    var myself = this;
     $(this.tool_layer.getCanvas()).bind('mousedown', function(evt) {
       myself._onToolMouseDown(evt);
     });
@@ -125,6 +127,14 @@ cb.Presenter = Class.extend({
       this.currentbrush.onMouseMove(pos.x, pos.y, this._getCurrentLayer(), evt);
     }
   },
+  _setLayerOrder: function() {
+    var myself = this;
+    var num_layers = this.layers.length;
+    this.layer_box.find('.layer').each(function(index) {
+      var layer_index = $(this).attr('layer');
+      myself.layers[layer_index].setZIndex(num_layers - index);
+    });
+  },
   addLayer: function() {
     var layer_index = this.layers.length;
     var layer = new cb.Layer(this.canvas_width, 
@@ -133,10 +143,30 @@ cb.Presenter = Class.extend({
     this.layers.push(layer);
     this.canvas_box.append(layer.getCanvas());
     
-    var dom_layer = $('<div class="layer" layer="' + layer_index + '"></div>');
-    dom_layer.text("Layer " + layer_index);
-    this.layer_box.append(dom_layer);
-    this.currentlayer = layer_index;
+    var thumb_width = 50;
+    var thumb_height = (this.canvas_height / this.canvas_width) * thumb_width;
+    var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
+    var dom_thumb = $('<img/>').attr('src', thumb_src)
+                               .css('width', thumb_width)
+                               .css('height', thumb_height);
+                               
+    var dom_layer = $('<div></div>').attr('class', 'layer')
+                                    .attr('layer', layer_index)
+                                    .append(dom_thumb)
+                                    .append("Layer " + layer_index);
+    
+    $(layer).bind('updated', function() { 
+      var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
+      dom_thumb.attr('src', thumb_src); 
+    });
+    
+    var myself = this;
+    dom_thumb.bind('click', function() {
+      myself.selectLayer(layer_index);
+    })
+    
+    this.layer_box.prepend(dom_layer);
+    this.selectLayer(layer_index);
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
@@ -163,5 +193,13 @@ cb.Presenter = Class.extend({
       this.brush_box.find('#brush_select_' + name).css('color', 'black');
       this.currentbrush = this.brushes[name];
     } 
+  },
+  selectLayer: function(index) {
+    if (index > this.layers.length || index < 0) {
+      return;
+    }
+    $('.layer.selected').removeClass('selected');
+    this.currentlayer = index;
+    $('.layer[layer=' + index + ']').addClass('selected');
   }
 });
