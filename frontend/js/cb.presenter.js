@@ -52,8 +52,13 @@ cb.Presenter = Class.extend({
     hbox1.append(vbox2);
   
     var canvas_wrap = $('<div class="box boxFlex vbox center canvas-wrap"></div>');
-    canvas_wrap.css('overflow', 'auto');
+    canvas_wrap.css('overflow', 'auto')
+               .css('position', 'relative');
+    
     vbox2.append(canvas_wrap);
+    
+    var logo_box = $('<div id="logo">Chromabrush</div>');
+    canvas_wrap.append(logo_box);
     
     this.canvas_box = $('<div id="canvas_box"></div>');
     this.canvas_box.css('position', 'relative')

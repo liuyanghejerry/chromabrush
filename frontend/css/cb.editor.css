@@ -4,6 +4,12 @@
   padding: 4px;
 }
 
+/* Fonts */
+@font-face {
+  font-family: 'Raleway';
+  src: url('raleway_thin.otf') format('opentype');
+}
+
 /* Styles */
 html {
   height: 100%;
@@ -39,4 +45,14 @@ body {
 
 .canvas-wrap {
   background: #aaa;
+}
+
+#logo {
+  font: 30px Raleway;
+  color: #333;
+  cursor: default;
+  position: absolute;
+  right: 15px;
+  bottom: 10px;
+  text-shadow: 1px 1px 1px #fff;
 }

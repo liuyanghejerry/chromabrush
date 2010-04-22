@@ -21,3 +21,9 @@ SOURCE CODE:
 Except where othwerwise noted, the source code of this project is released 
 under the Apache 2 license, as described in the LICENSE file.
 
+FONTS:
+This project uses the following fonts:
+ * Raleway made by Matt McInerney
+   Available at http://www.theleagueofmoveabletype.com/fonts/14-raleway
+   Released under the Open Font License:
+   http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
