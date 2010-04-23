@@ -125,11 +125,30 @@ cb.Presenter = Class.extend({
     for (var i = 0; i < files.length; i++) {
       console.log('file', files[i]);
       var file = files[i];
-      var xhr = new XMLHttpRequest;
-      xhr.open('post', '/', true);
+      var myself = this;
+      var xhr = new XMLHttpRequest();
+      /*
+      xhr.open('post', '/image', true);
       xhr.onreadystatechange = function () {
         if (this.readyState != 4) { return; }
         console.log('readystatechange', this, this.responseText);
+      };
+      xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+      xhr.setRequestHeader('X-File-Name', file.fileName);
+      xhr.setRequestHeader('X-File-Size', file.fileSize);
+      xhr.send(file);
+      */
+      xhr.open('post', '/image', true);
+      xhr.onreadystatechange = function() {
+        if (this.readyState != 4) { return; }
+        console.log('readystatechange', this);
+        if (this.responseText.indexOf('http') == 0) {
+          var img = new Image();
+          img.src = this.responseText;
+          img.addEventListener('load', function() {
+            myself.getCurrentLayer().getContext().drawImage(img, 0, 0);
+          });
+        }
       };
       xhr.setRequestHeader('Content-Type', 'multipart/form-data');
       xhr.setRequestHeader('X-File-Name', file.fileName);
