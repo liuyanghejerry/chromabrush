@@ -91,6 +91,11 @@ cb.Layer = Class.extend({
     context.beginPath();
     this._onUpdated();
   },
+  paintImage: function(img, x, y) {
+    var context = this.getContext();
+    context.drawImage(img, 0, 0);
+    this._onUpdated();
+  },
   paintLine: function(x0, y0, x1, y1, pixel_size, color) {
     var canvas = this.getCanvas();
     cb.util.canvas.paintLine(canvas, x0, y0, x1, y1, pixel_size, color);

@@ -146,7 +146,7 @@ cb.Presenter = Class.extend({
           var img = new Image();
           img.src = this.responseText;
           img.addEventListener('load', function() {
-            myself.getCurrentLayer().getContext().drawImage(img, 0, 0);
+            myself.getCurrentLayer().paintImage(img, 0, 0);
           });
         }
       };
