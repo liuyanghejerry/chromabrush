@@ -15,18 +15,27 @@ class MainHandler(webapp.RequestHandler):
       self.response.out.write('Invalid key')
       return
       
-    data = memcache.get(key)
+    file_data = memcache.get("file|%s" % key)
+    file_type = memcache.get("type|%s" % key)
     
-    if data is None:
+    if file_data is None:
       self.response.out.write('No data')
       return
       
-    self.response.headers["Content-Type"] = "image/jpeg"
-    self.response.out.write(data)
+    self.response.headers["Content-Type"] = file_type
+    self.response.out.write(file_data)
   
   def post(self, key=None):
     key = hashlib.sha1(self.request.body).hexdigest()
-    memcache.add(key, self.request.body, 60)
+    file_data = self.request.body
+    file_type = self.request.headers['X-File-Type']
+    
+    if file_type.lower() not in ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']:
+      self.response.out.write('invalid type')
+      return
+      
+    memcache.add("file|%s" % key, file_data, 60)
+    memcache.add("type|%s" % key, file_type, 60)
     
     url = "%s/image/%s" % (self.request.host_url, key)
     logging.info(self.request.headers)

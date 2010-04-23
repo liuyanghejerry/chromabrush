@@ -150,9 +150,11 @@ cb.Presenter = Class.extend({
           });
         }
       };
+      console.log(file);
       xhr.setRequestHeader('Content-Type', 'multipart/form-data');
       xhr.setRequestHeader('X-File-Name', file.fileName);
       xhr.setRequestHeader('X-File-Size', file.fileSize);
+      xhr.setRequestHeader('X-File-Type', file.type);
       xhr.send(file);
     }
     return false;
