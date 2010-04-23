@@ -147,6 +147,7 @@ cb.Presenter = Class.extend({
           img.src = this.responseText;
           img.addEventListener('load', function() {
             myself.getCurrentLayer().paintImage(img, 0, 0);
+            myself._triggerEvent('import');
           });
         }
       };
@@ -184,6 +185,10 @@ cb.Presenter = Class.extend({
       var layer_index = $(this).attr('layer');
       myself.layers[layer_index].setZIndex(num_layers - index);
     });
+    this._triggerEvent('layerorderchange');
+  },
+  _triggerEvent: function(name) {
+    $(this).trigger(name);
   },
   addLayer: function() {
     var new_index = this.layers.length;
@@ -230,6 +235,7 @@ cb.Presenter = Class.extend({
     var myself = this;
     brush_selection.bind('click', function(evt) {
       myself.selectBrush(name);
+      myself._triggerEvent('controlchange');
     });
     this.brush_box.append(brush_selection);
   },

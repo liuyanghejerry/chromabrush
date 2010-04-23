@@ -23,6 +23,7 @@
     <script src="js/cb.layer.js"></script>
     <script src="js/cb.brush.js"></script>
     <script src="js/cb.presenter.js"></script>
+    <script src="js/cb.sound.js"></script>
     <link rel="stylesheet" href="css/hbox.vbox.css" />
     <link rel="stylesheet" href="css/cb.editor.css" />
     <script>
@@ -31,6 +32,11 @@
         presenter.addLayer();
         presenter.addLayer();
         presenter.addLayer();
+        
+        var sound = new cb.Sound();
+        $(presenter).bind('import', function(){ sound.play('/audio/bloop02.ogg'); });
+        $(presenter).bind('controlchange', function(){ sound.play('/audio/click01.ogg'); });
+        $(presenter).bind('layerorderchange', function(){ sound.play('/audio/bloop01.ogg'); });
         
         presenter.addBrush('pencil', new cb.PencilBrush(presenter));
         presenter.addBrush('pen', new cb.PenBrush(presenter));
