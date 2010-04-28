@@ -47,6 +47,7 @@ cb.Presenter = Class.extend({
     this.control_box = $('<div class="box boxFlex0" id="control_box"></div>');
     hbox1.append(this.control_box);
     this.color_selector = new cb.ColorSelector(this.control_box);
+    this.brush_size_selector = new cb.BrushSizeSelector(this.control_box);
 
     var vbox2 = $('<div class="vbox boxFlex"></div>');
     hbox1.append(vbox2);
@@ -274,5 +275,8 @@ cb.Presenter = Class.extend({
   },
   currentColor: function() {
     return this.color_selector.currentColor();
+  },
+  currentBrushSize: function() {
+    return this.brush_size_selector.currentBrushSize();
   }
 });

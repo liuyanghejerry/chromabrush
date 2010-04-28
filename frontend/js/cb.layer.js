@@ -36,16 +36,16 @@ cb.Layer = Class.extend({
     context.clearRect(0, 0, this.width, this.height);
     this._onUpdated();
   },
-  erasePixel: function(x, y, pixel_size) {
-    var block_x = Math.floor(x / pixel_size);
-    var block_y = Math.floor(y / pixel_size);
+  erasePixel: function(x, y, brush_size) {
+    var block_x = Math.floor(x / cb.PixelSize - brush_size / 2.0 + 0.5);
+    var block_y = Math.floor(y / cb.PixelSize - brush_size / 2.0 + 0.5);
     var context = this.getContext();
     context.beginPath();
     context.clearRect(
-        Math.round(block_x * pixel_size), 
-        Math.round(block_y * pixel_size), 
-        pixel_size, 
-        pixel_size);
+        Math.round(block_x * cb.PixelSize), 
+        Math.round(block_y * cb.PixelSize), 
+        cb.PixelSize * brush_size, 
+        cb.PixelSize * brush_size);
     this._onUpdated();
   },
   fill: function(color) {
@@ -71,8 +71,8 @@ cb.Layer = Class.extend({
     context.drawImage(this.getCanvas(), 0, 0, width, height);
     return canvas.toDataURL();
   },
-  paintFill: function(x, y, pixel_size, color) {
-    cb.util.canvas.paintFill(this.getCanvas(), x, y, pixel_size, color);
+  paintFill: function(x, y, color) {
+    cb.util.canvas.paintFill(this.getCanvas(), x, y, color);
     this._onUpdated();
   },
   paintGrid: function(step, color) {
@@ -96,9 +96,9 @@ cb.Layer = Class.extend({
     context.drawImage(img, 0, 0);
     this._onUpdated();
   },
-  paintLine: function(x0, y0, x1, y1, pixel_size, color) {
+  paintLine: function(x0, y0, x1, y1, brush_size, color) {
     var canvas = this.getCanvas();
-    cb.util.canvas.paintLine(canvas, x0, y0, x1, y1, pixel_size, color);
+    cb.util.canvas.paintLine(canvas, x0, y0, x1, y1, brush_size, color);
     this._onUpdated();
   },
   /** 
@@ -122,8 +122,8 @@ cb.Layer = Class.extend({
    * The square pixels are aligned in a grid, so the grid box containing the
    * x and y coordinates will be painted.
    */
-  paintPixel: function(x, y, pixel_size, color) {
-    cb.util.canvas.paintPixel(this.getCanvas(), x, y, pixel_size, color);
+  paintPixel: function(x, y, brush_size, color) {
+    cb.util.canvas.paintPixel(this.getCanvas(), x, y, brush_size, color);
     this._onUpdated();
   },
   setZIndex: function(zindex) {

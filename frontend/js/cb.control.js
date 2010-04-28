@@ -103,11 +103,11 @@ cb.ColorSelector = Class.extend({
           var black = Math.max(ii - jj * 0.5, 0.0);
           var white = Math.max(jj - ii * 0.5, 0.0);
           var color = 1.0 - black - white;
-          context.beginPath();
           context.fillStyle = cb.util.normalizedColor(
               rgb[0] * color + white,
               rgb[1] * color + white,
               rgb[2] * color + white);
+          context.beginPath();
           context.moveTo(i, j);
           context.lineTo(i + 1, j);
           context.lineTo(i + 1, j + 1);
@@ -155,7 +155,6 @@ cb.ColorSelector = Class.extend({
 
       // Redraw the control.
       context.setTransform(2.0, 0.0, 0.0, 1.0, 0.0, 0.0);
-      context.beginPath();
       context.clearRect(0, 0, canvas.width(), canvas.height());
 
       paint_hue_circle();
@@ -174,4 +173,65 @@ cb.ColorSelector = Class.extend({
         rgb[1] * color + white,
         rgb[2] * color + white);
   }
+});
+
+cb.BrushSizeSelector = Class.extend({
+  init: function(container) {
+    var text = $('<div />');
+    container.append(text);
+    container.append($('<br>'));
+
+    var canvas = $('<canvas />');
+    canvas.css('width', '150px')
+          .css('height', '50px');
+    container.append(canvas);
+    container.append($('<br>'));
+
+    var context = canvas.get(0).getContext('2d');
+
+    var size_min = 1.0;
+    var size_max = 8.0;
+    this.size = 1.0;
+
+    var myself = this;
+    var slider_redraw = function() {
+      context.setTransform(2.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+      context.clearRect(0, 0, canvas.width(), canvas.height());
+
+      // Draw the background triangle.
+      context.fillStyle = '#aaa';
+      context.beginPath();
+      context.moveTo(10, 25);
+      context.lineTo(140, 5);
+      context.lineTo(140, 45);
+      context.closePath();
+      context.fill();
+
+      // Draw the handle.
+      var x = (myself.size - size_min) / (size_max - size_min) * 130 + 10;
+      context.strokeStyle = '#222';
+      context.beginPath();
+      context.moveTo(x - 2, 0);
+      context.lineTo(x - 2, 50);
+      context.stroke();
+      context.beginPath();
+      context.moveTo(x + 2, 0);
+      context.lineTo(x + 2, 50);
+      context.stroke();
+
+      // Update the text as well.
+      text.text(myself.size + 'px');
+    };
+
+    slider_redraw();
+    canvas.bind('mousedown', function(evt) {
+      var x = evt.pageX - canvas.offset().left;
+      myself.size = Math.max(
+          Math.floor((x - 10) / 130 * (size_max - size_min) + 0.5), 0.0) + size_min;
+
+      slider_redraw();
+    });
+  },
+
+  currentBrushSize: function() { return this.size; }
 });

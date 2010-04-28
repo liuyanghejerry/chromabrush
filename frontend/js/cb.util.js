@@ -19,9 +19,9 @@ var cb = cb || {};
 cb.util = {};
 cb.util.canvas = {};
 
-cb.util.canvas.paintFill = function(canvas, x, y, pixel_size, color) {
-  var x0 = Math.floor(x / pixel_size);
-  var y0 = Math.floor(y / pixel_size);
+cb.util.canvas.paintFill = function(canvas, x, y, color) {
+  var x0 = Math.floor(x / cb.PixelSize);
+  var y0 = Math.floor(y / cb.PixelSize);
   var context = canvas.getContext('2d');
   var stack = [x0, y0];
 
@@ -30,8 +30,8 @@ cb.util.canvas.paintFill = function(canvas, x, y, pixel_size, color) {
   var image = context.getImageData(0, 0, canvas.width, canvas.height);
   var pixel = function(bx, by) {
     // Read the color of the specified pixel.
-    var x = bx * pixel_size;
-    var y = by * pixel_size;
+    var x = bx * cb.PixelSize;
+    var y = by * cb.PixelSize;
     var p = (x + y * canvas.width) * 4;
     return [
       image.data[p],
@@ -56,19 +56,19 @@ cb.util.canvas.paintFill = function(canvas, x, y, pixel_size, color) {
   var set_pixel = function(bx, by) {
     // Set the pixel color to both the in memory image and the rendering
     // surface.
-    var x = bx * pixel_size;
-    var y = by * pixel_size;
+    var x = bx * cb.PixelSize;
+    var y = by * cb.PixelSize;
     var p = (x + y * canvas.width) * 4;
     // We just need to set the color to something other than seed_color;
     image.data[p] = seed_color[0] ^ 0x01;
-    cb.util.canvas.paintPixel(canvas, x, y, pixel_size, color);
+    cb.util.canvas.paintPixel(canvas, x, y, 1.0, color);
 
     // Later we need to check the scanlines above and blow this line.
     if (by > 0) {
       stack.push(bx);
       stack.push(by - 1);
     }
-    if (by + 1 < canvas.height / pixel_size) {
+    if (by + 1 < canvas.height / cb.PixelSize) {
       stack.push(bx);
       stack.push(by + 1);
     }
@@ -91,7 +91,7 @@ cb.util.canvas.paintFill = function(canvas, x, y, pixel_size, color) {
     if (x + 1 < canvas.width) {
       // Skip the first pixel because it's already colored.
       for (var x_max = x + 1;
-           x_max < canvas.width / pixel_size && is_open(x_max, y);
+           x_max < canvas.width / cb.PixelSize && is_open(x_max, y);
            x_max++) {
         set_pixel(x_max, y);
       }
@@ -107,7 +107,7 @@ cb.util.canvas.paintFill = function(canvas, x, y, pixel_size, color) {
   }
 };
 
-cb.util.canvas.paintLine = function(canvas, x0, y0, x1, y1, pixel_size, color) {
+cb.util.canvas.paintLine = function(canvas, x0, y0, x1, y1, brush_size, color) {
   var delta_x = x1 >= x0 ? 1 : -1;
   var delta_y = y1 >= y0 ? 1 : -1;
   var distance_x = (x1 - x0) * delta_x;
@@ -119,7 +119,7 @@ cb.util.canvas.paintLine = function(canvas, x0, y0, x1, y1, pixel_size, color) {
           canvas,
           x0 + delta_x * i,
           y0 + Math.floor(slope * delta_y * i),
-          pixel_size, 
+          brush_size, 
           color);
     }
   } else {
@@ -129,24 +129,24 @@ cb.util.canvas.paintLine = function(canvas, x0, y0, x1, y1, pixel_size, color) {
           canvas,
           x0 + Math.floor(slope * delta_x * i),
           y0 + delta_y * i,
-          pixel_size, 
+          brush_size, 
           color);
     }
   }
-  cb.util.canvas.paintPixel(canvas, x1, y1, pixel_size, color);
+  cb.util.canvas.paintPixel(canvas, x1, y1, brush_size, color);
 };
 
-cb.util.canvas.paintPixel = function(canvas, x, y, pixel_size, color) {
-  var block_x = Math.floor(x / pixel_size);
-  var block_y = Math.floor(y / pixel_size);
+cb.util.canvas.paintPixel = function(canvas, x, y, brush_size, color) {
+  var block_x = Math.floor(x / cb.PixelSize - brush_size / 2.0 + 0.5);
+  var block_y = Math.floor(y / cb.PixelSize - brush_size / 2.0 + 0.5);
   var context = canvas.getContext('2d');
   context.beginPath();
   context.fillStyle = color;
   context.fillRect(
-      Math.round(block_x * pixel_size), 
-      Math.round(block_y * pixel_size), 
-      pixel_size, 
-      pixel_size);  
+      Math.round(block_x * cb.PixelSize), 
+      Math.round(block_y * cb.PixelSize), 
+      cb.PixelSize * brush_size, 
+      cb.PixelSize * brush_size);  
 };
 
 cb.util.normalizedColor = function(r, g, b) {
