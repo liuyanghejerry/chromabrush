@@ -205,10 +205,12 @@
         }
         if (checkbox_thread.checked) {
           var func = workerGetDiff;
+          var timeout = 0;
         } else {
           var func = getDiff;
+          var timeout = 100;
         }
-        window.setTimeout(func, 200);
+        window.setTimeout(func, timeout);
       };
       
       
