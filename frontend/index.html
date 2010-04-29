@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+  Copyright 2010 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html>
+  <head>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/ejohn.Class.js"></script>
+    <script src="js/cb.util.js"></script>
+    <script src="js/cb.layer.js"></script>
+    <script src="js/cb.brush.js"></script>
+    <script src="js/cb.presenter.js"></script>
+    <script src="js/cb.sound.js"></script>
+    <link rel="stylesheet" href="css/hbox.vbox.css" />
+    <link rel="stylesheet" href="css/cb.editor.css" />
+    <script>
+      function init() {
+        var presenter = new cb.Presenter();
+        presenter.addLayer();
+        presenter.addLayer();
+        presenter.addLayer();
+        
+        var sound = new cb.Sound();
+        $(presenter).bind('import', function(){ sound.play('/audio/bloop02.ogg'); });
+        $(presenter).bind('controlchange', function(){ sound.play('/audio/click01.ogg'); });
+        $(presenter).bind('layerorderchange', function(){ sound.play('/audio/bloop01.ogg'); });
+        
+        presenter.addBrush('pencil', new cb.PencilBrush(presenter));
+        presenter.addBrush('pen', new cb.PenBrush(presenter));
+        presenter.addBrush('eraser', new cb.EraserBrush(presenter));
+        presenter.addBrush('line', new cb.LineBrush(presenter));
+        presenter.addBrush('fill', new cb.FillBrush(presenter));
+        presenter.selectBrush('pencil');
+      };
+    </script>
+  </head>
+  <body onload="init();">
+  </body>
+</html>
