@@ -147,7 +147,9 @@ cb.Presenter = Class.extend({
           var img = new Image();
           img.src = this.responseText;
           img.addEventListener('load', function() {
-            myself.getCurrentLayer().paintImage(img, 0, 0);
+            //myself.getCurrentLayer().paintImage(img, 0, 0);
+            var layer = myself.addLayer(img.width, img.height);
+            layer.paintImage(img, 0, 0);
             myself._triggerEvent('import');
           });
         }
@@ -194,14 +196,18 @@ cb.Presenter = Class.extend({
   _triggerEvent: function(name) {
     $(this).trigger(name);
   },
-  addLayer: function() {
+  addLayer: function(width, height) {
+    if (!width) {
+      width = this.canvas_width;
+      height = this.canvas_height;
+    }
     var new_index = this.layers.length;
-    var layer = new cb.Layer(this.canvas_width, this.canvas_height, new_index);
+    var layer = new cb.Layer(width, height, new_index);
     this.layers.push(layer);
     this.canvas_box.append(layer.getCanvas());
     
     var thumb_width = 50;
-    var thumb_height = (this.canvas_height / this.canvas_width) * thumb_width;
+    var thumb_height = (height / width) * thumb_width;
     var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
     var dom_thumb = $('<img/>')
         .attr('src', thumb_src)
@@ -228,6 +234,7 @@ cb.Presenter = Class.extend({
     
     this.layer_box.prepend(dom_layer);
     this.selectLayer(new_index);
+    return layer;
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
