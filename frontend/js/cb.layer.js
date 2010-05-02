@@ -133,8 +133,8 @@ cb.Layer = Class.extend({
     var x = this.canvas.css('left');
     var y = this.canvas.css('top');
     return {
-      x: x.substring(0, x.length - 2),
-      y: y.substring(0, y.length - 2)
+      x: x.substring(0, x.length - 2) - 0,
+      y: y.substring(0, y.length - 2) - 0
     };
   },
   setPosition: function(x, y) {

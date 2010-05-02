@@ -133,14 +133,18 @@ cb.LineBrush = cb.Brush.extend({
     this.startX = x;
     this.startY = y;
   },
+  onMouseUp: function(x, y, evt) {
+    this.presenter.getToolLayer().clear();
+  },
   onMouseMove: function(x, y, evt) {
     if (!this.startX) { return; }
+    var layer_position = this.presenter.getCurrentLayer().getPosition();
     this.presenter.getToolLayer().clear();
     this.presenter.getToolLayer().paintLine(
-        this.startX, 
-        this.startY, 
-        x, 
-        y, 
+        this.startX + layer_position.x, 
+        this.startY + layer_position.y, 
+        x + layer_position.x, 
+        y + layer_position.y, 
         0.3, 
         this.presenter.currentColor());
   }
@@ -165,8 +169,8 @@ cb.MoveTool = cb.Brush.extend({
     this.startX = canvas_position.x;
     this.startY = canvas_position.y;
     var layer_position = this.presenter.getCurrentLayer().getPosition();
-    this.startLX = layer_position.x - 0;
-    this.startLY = layer_position.y - 0;
+    this.startLX = layer_position.x;
+    this.startLY = layer_position.y;
   },
   onMouseUp: function(x, y, evt) {
     this.startX = this.startY = this.startLX = this.startLY = null;
