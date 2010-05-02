@@ -1,0 +1,182 @@
+/**
+ * Copyright 2010 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+var cb = cb || {};
+
+cb.Brush = Class.extend({
+  init: function() {},
+  reset: function() {
+    this.init();
+  },
+  setPresenter: function(presenter) {
+    this.presenter = presenter;
+  },
+  onMouseDown: function(x, y, evt) {},
+  onMouseUp: function(x, y, evt) {},
+  onMouseMove: function(x, y, evt) {}
+});
+
+cb.PencilBrush = cb.Brush.extend({
+  init: function() {
+    this.drawing = false;
+  },
+  onMouseDown: function(x, y, evt) {
+    this.drawing = true;
+    var layer = this.presenter.getCurrentLayer();
+    layer.paintPixel(x, y,
+        this.presenter.currentBrushSize(),
+        this.presenter.currentColor());
+  },
+  onMouseUp: function(x, y, evt) {
+    this.drawing = false;
+  },
+  onMouseMove: function(x, y, evt) {
+    if (this.drawing) {
+      var layer = this.presenter.getCurrentLayer();
+      layer.paintPixel(x, y,
+          this.presenter.currentBrushSize(),
+          this.presenter.currentColor());
+    }
+  }
+});
+
+cb.PenBrush = cb.Brush.extend({
+  init: function() {
+    this.previousX = this.previousY = null;
+  },
+  onMouseDown: function(x, y, evt) {
+    var layer = this.presenter.getCurrentLayer();
+    layer.paintPixel(x, y,
+        this.presenter.currentBrushSize(),
+        this.presenter.currentColor());
+    this.previousX = x;
+    this.previousY = y;
+  },
+  onMouseUp: function(x, y, evt) {
+    this.previousX = this.previousY = null;
+  },
+  onMouseMove: function(x, y, evt) {
+    if (!this.previousX) { return; }
+    var layer = this.presenter.getCurrentLayer();
+    layer.paintLine(
+        this.previousX,
+        this.previousY,
+        x,
+        y,
+        this.presenter.currentBrushSize(),
+        this.presenter.currentColor());
+    this.previousX = x;
+    this.previousY = y;
+  }
+});
+
+cb.EraserBrush = cb.Brush.extend({
+  init: function() {
+    this.drawing = false;
+  },
+  onMouseDown: function(x, y, evt) {
+    this.drawing = true;
+    var layer = this.presenter.getCurrentLayer();
+    layer.erasePixel(x, y, this.presenter.currentBrushSize());
+  },
+  onMouseUp: function(x, y, evt) {
+    this.drawing = false;
+  },
+  onMouseMove: function(x, y, evt) {
+    if (this.drawing) {
+      var layer = this.presenter.getCurrentLayer();
+      layer.erasePixel(x, y, this.presenter.currentBrushSize());
+    }
+  }
+});
+
+cb.LineBrush = cb.Brush.extend({
+  init: function() {
+    this.startX = this.startY = null;
+  },
+  onMouseDown: function(x, y, evt) {
+    var layer = this.presenter.getCurrentLayer();
+    if (x < 0 || x >= layer.width || y < 0 || y >= layer.height) {
+      return;
+    }
+
+    if (this.startX) {
+      // Draw a line.
+      this.presenter.getToolLayer().clear();
+      layer.paintLine(
+          this.startX, 
+          this.startY, 
+          x, 
+          y, 
+          this.presenter.currentBrushSize(), 
+          this.presenter.currentColor());
+      console.log(evt, evt.shiftKey);
+      if (!evt.shiftKey) {
+        // End of line.
+        this.startX = this.startY = null;
+        return;
+      }
+    }
+    this.startX = x;
+    this.startY = y;
+  },
+  onMouseMove: function(x, y, evt) {
+    if (!this.startX) { return; }
+    this.presenter.getToolLayer().clear();
+    this.presenter.getToolLayer().paintLine(
+        this.startX, 
+        this.startY, 
+        x, 
+        y, 
+        0.3, 
+        this.presenter.currentColor());
+  }
+});
+
+cb.FillBrush = cb.Brush.extend({
+  onMouseDown: function(x, y, evt) {
+    var layer = this.presenter.getCurrentLayer();
+    if (x < 0 || x >= layer.width || y < 0 || y >= layer.height) {
+      return;
+    }
+    layer.paintFill(x, y, this.presenter.currentColor());
+  }
+});
+
+cb.MoveTool = cb.Brush.extend({
+  init: function() {
+    this.startX = this.startY = this.startLX = this.startLY = null;
+  },
+  onMouseDown: function(x, y, evt) {
+    var canvas_position = this.presenter.getCanvasMousePos(evt);
+    this.startX = canvas_position.x;
+    this.startY = canvas_position.y;
+    var layer_position = this.presenter.getCurrentLayer().getPosition();
+    this.startLX = layer_position.x - 0;
+    this.startLY = layer_position.y - 0;
+  },
+  onMouseUp: function(x, y, evt) {
+    this.startX = this.startY = this.startLX = this.startLY = null;
+  },
+  onMouseMove: function(x, y, evt) {
+    if (!this.startX) { return; }
+    var canvas_position = this.presenter.getCanvasMousePos(evt);
+    var layer = this.presenter.getCurrentLayer();
+    layer.setPosition(
+      this.startLX + canvas_position.x - this.startX,
+      this.startLY + canvas_position.y - this.startY);
+  }
+});

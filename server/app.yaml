@@ -1,0 +1,14 @@
+application: chromabrush
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /image.*
+  script: image.py
+
+- url: /mocks/
+  static_dir: mocks
+
+- url: /
+  static_dir: frontend
