@@ -174,6 +174,7 @@ cb.MoveTool = cb.Brush.extend({
   },
   onMouseUp: function(x, y, evt) {
     this.startX = this.startY = this.startLX = this.startLY = null;
+    this.presenter.getToolLayer().clear();
   },
   onMouseMove: function(x, y, evt) {
     if (!this.startX) { return; }
@@ -182,5 +183,10 @@ cb.MoveTool = cb.Brush.extend({
     layer.setPosition(
       this.startLX + canvas_position.x - this.startX,
       this.startLY + canvas_position.y - this.startY);
+
+    // Draw a box around the canvas on the tool layer.
+    this.presenter.getToolLayer().clear();
+    this.presenter.getToolLayer().paintLayerBox(
+        this.presenter.getCurrentLayer(), 5.0, '#668');
   }
 });

@@ -101,21 +101,16 @@ cb.Layer = Class.extend({
     cb.util.canvas.paintLine(canvas, x0, y0, x1, y1, brush_size, color);
     this._onUpdated();
   },
-  /** 
-   * 
-   */
-  paintMarker: function(x, y, pixel_size, color) {
-    var bx = Math.floor(x / pixel_size) * pixel_size;
-    var by = Math.floor(y / pixel_size) * pixel_size;
+  paintLayerBox: function(layer, line_size, color) {
+    var pos = layer.getPosition();
+    var size = layer.getSize();
     var context = this.getContext();
-    context.beginPath();
     context.strokeStyle = color;
-    context.moveTo(bx, by);
-    context.lineTo(bx + pixel_size - 1, by + pixel_size - 1);
-    context.moveTo(bx + pixel_size - 1, by);
-    context.lineTo(bx, by + pixel_size - 1);
-    context.stroke();
-    this._onUpdated();
+    context.lineWidth = line_size;
+    context.strokeRect(pos.x - line_size / 2.0,
+                       pos.y - line_size / 2.0,
+                       size.w + line_size,
+                       size.h + line_size);
   },
   /**
    * Paints a square pixel on this canvas.
@@ -140,5 +135,13 @@ cb.Layer = Class.extend({
   setPosition: function(x, y) {
     this.canvas.css('left', x + 'px');
     this.canvas.css('top', y + 'px');
+  },
+  getSize: function() {
+    var w = this.canvas.css('width');
+    var h = this.canvas.css('height');
+    return {
+      w: w.substring(0, w.length - 2) - 0,
+      h: h.substring(0, h.length - 2) - 0
+    };
   }
 });
