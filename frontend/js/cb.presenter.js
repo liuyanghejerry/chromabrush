@@ -74,8 +74,24 @@ cb.Presenter = Class.extend({
     vbox2.append(this.brush_box);
   
     this.panel_box = $('<div class="box boxFlex0" id="panel_box"></div>');
-    this.panel_box.text('Panel box');
     hbox1.append(this.panel_box);
+
+    this.layer_add_button = $('<div class="button">add</div>');
+    this.layer_add_button.css('display', 'inline');
+    this.layer_add_button.bind('click', function(evt) {
+      myself.addLayer();
+      myself._triggerEvent('controlchange');
+    });
+    this.panel_box.append(this.layer_add_button);
+  
+    this.layer_del_button = $('<div class="button">del</div>');
+    this.layer_del_button.css('display', 'inline');
+    this.layer_del_button.bind('click', function(evt) {
+      myself.removeLayer();
+      myself._triggerEvent('controlchange');
+    });
+    this.panel_box.append(this.layer_del_button);
+    this.panel_box.append($('<hr />'));
   
     this.layer_box = $('<div class="panel" id="layer_box"></div>');
     this.layer_box.sortable({
@@ -229,12 +245,36 @@ cb.Presenter = Class.extend({
     
     var myself = this;
     dom_layer.bind('mousedown', function() {
-      myself.selectLayer(new_index);
+      // This callback can be invoked after the index of this layer has been
+      // changed by removeLayer, so we can't use new_index.
+      myself.selectLayer(dom_layer.attr('layer') - 0);
     });
     
     this.layer_box.prepend(dom_layer);
     this.selectLayer(new_index);
     return layer;
+  },
+  removeLayer: function() {
+    // Avoid deleting the last layer.
+    if (this.layers.length <= 1) { return; }
+
+    // Shift the layers up and delete the last element in layers array.
+    var index = this.currentlayer;
+    var layer = this.layers[index];
+    for (var i = index; i < this.layers.length - 1; i++) {
+      this.layers[i] = this.layers[i + 1];
+    }
+    this.layers.pop();
+
+    // Remove the corresponding HTML elements.
+    this.layer_box.find('div[layer=' + index + ']').remove();
+    for (var i = index; i < this.layers.length; i++) {
+      this.layer_box.find('div[layer=' + (i + 1) + ']').attr('layer', i);
+    }
+    $(layer.getCanvas()).remove();
+
+    // Select another layer.
+    this.selectLayer(index == 0 ? 0 : index - 1);
   },
   addBrush: function(name, brush) {
     this.brushes[name] = brush;
