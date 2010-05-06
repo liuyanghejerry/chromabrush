@@ -6,8 +6,8 @@
 
 /* Fonts */
 @font-face {
-  font-family: 'Raleway';
-  src: url('raleway_thin.otf') format('opentype');
+  font-family: 'Josefin';
+  src: url('JosefinSansStd-Light.otf') format('opentype');
 }
 
 /* Styles */
@@ -48,7 +48,7 @@ body {
 }
 
 #logo {
-  font: 30px Raleway;
+  font: 30px 'Josefin';
   color: #333;
   cursor: default;
   position: absolute;
