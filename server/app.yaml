@@ -10,5 +10,9 @@ handlers:
 - url: /mocks/
   static_dir: mocks
 
+- url: /audio/
+  static_dir: frontend/audio
+  mime_type: audio/ogg
+
 - url: /
   static_dir: frontend
