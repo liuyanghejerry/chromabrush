@@ -10,6 +10,14 @@
         background: #36b;
         color: #fff;
       }
+      #toolbarMenuParent {
+        border: 1px solid #ccc;
+      }
+      #toolbarMenuParent span {
+        display: inline-block;
+        padding: 6px 3px;
+        margin: 0px;
+      }
     </style>
   </head>
   <body>
@@ -26,16 +34,34 @@
       <div class="menuitem">Item 1</div>
       <div class="menuitem">Item 2</div>
     </div>
+    
+    <div id="toolbarMenu01">
+      <div class="menuitem">Item 1</div>
+      <div class="menuitem">Item 2</div>
+    </div>
+    
+    <div id="toolbarMenu02">
+      <div class="menuitem">Item 1</div>
+      <div class="menuitem">Item 2</div>
+    </div>
+    
+    <div id="toolbarMenuParent"></div>
     <script>
       var modalPopup = new cb.ui.ModalPopup('<h1>This is popup content</h1>', {closeable:true});
       document.getElementById('linkPopup01').addEventListener('click', function() {
         modalPopup.show();
       }, false);
       
-      var pointingPopup = new cb.ui.PointingPopup('#menu', '#target01', {closeable:false, autoclose:true});
+      var pointingPopup = new cb.ui.PointingPopup('#menu', {closeable:false, autoclose:true});
+      pointingPopup.setTarget('#target01');
       document.getElementById('linkPopup02').addEventListener('click', function() {
         pointingPopup.show();
       }, false);
+      
+      var toolbarMenu = new cb.ui.Menu();
+      toolbarMenu.addEntry('<span>Link 1</span>', new cb.ui.PointingPopup('#toolbarMenu01'));
+      toolbarMenu.addEntry('<span>Link 2</span>', new cb.ui.PointingPopup('#toolbarMenu02'));
+      toolbarMenu.appendTo('#toolbarMenuParent');
     </script>
   </body>
 </html>

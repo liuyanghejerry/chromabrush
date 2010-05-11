@@ -31,14 +31,13 @@ cb.Presenter = Class.extend({
     $(window).bind('unload', $.proxy(this, '_cleanup'));
 
     var body = $('body');
-    body.empty();
+    //body.empty();
 
     var vbox1 = $('<div class="vbox"></div>');
     vbox1.css('height', '100%');
     body.append(vbox1);
   
     this.menu_box = $('<div class="box boxFlex0" id="menu_box"></div>');
-    this.menu_box.text('Menu box');
     vbox1.append(this.menu_box);
   
     var hbox1 = $('<div class="hbox boxFlex"></div>');
@@ -335,5 +334,8 @@ cb.Presenter = Class.extend({
       'x' : evt.pageX - offset.left,
       'y' : evt.pageY - offset.top
     };
+  },
+  addToolbar: function(toolbar) {
+    toolbar.appendTo(this.menu_box);
   }
 });

@@ -25,8 +25,10 @@
     <script src="js/cb.control.js"></script>
     <script src="js/cb.presenter.js"></script>
     <script src="js/cb.sound.js"></script>
+    <script src="js/cb.ui.js"></script>
     <link rel="stylesheet" href="css/hbox.vbox.css" />
     <link rel="stylesheet" href="css/cb.editor.css" />
+    <link rel="stylesheet" href="css/cb.ui.css" />
     <script>
       function init() {
         var presenter = new cb.Presenter();
@@ -47,9 +49,33 @@
         presenter.addBrush('fill', new cb.FillBrush());
         presenter.addBrush('move', new cb.MoveTool());
         presenter.selectBrush('pen');
+        
+        var toolbar = new cb.ui.Menu();
+        toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
+        toolbar.addEntry('#menuitem-file', new cb.ui.PointingPopup('#menu-file'));
+        toolbar.addEntry('#menuitem-edit', new cb.ui.PointingPopup('#menu-edit'));
+        presenter.addToolbar(toolbar);
       };
     </script>
   </head>
   <body onload="init();">
+    <div id="templates">
+      <span id="menuitem-system"><span class="symbol">&#9824;</span></span>
+      <div id="menu-system">
+        <div>System menu entry 1</div>
+      </div>
+      <span id="menuitem-file">File</span>
+      <div id="menu-file">
+        <div>File menu entry 1</div>
+        <div>File menu entry 2</div>
+        <div>File menu entry 3</div>
+      </div>
+      <span id="menuitem-edit">Edit</span>
+      <div id="menu-edit">
+        <div>Edit menu entry 1</div>
+        <div>Edit menu entry 2</div>
+        <div>Edit menu entry 3</div>
+      </div>
+    </div>
   </body>
 </html>

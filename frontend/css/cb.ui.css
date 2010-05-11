@@ -8,7 +8,9 @@
   left: 0;
   top: 0;
   overflow: hidden;
-  
+}
+.cb_ui_positioner .cb_ui_popupwrap {
+  position: relative;
 }
 .cb_ui_modalbg {
   background: rgba(0,0,0, 0.3);
@@ -20,19 +22,20 @@
 }
 .cb_ui_popupwrap {
   display: inline-block;
-  position: relative;
+  position: absolute;
+  padding: 10px;
 }
 .cb_ui_popup {
   -webkit-box-shadow: 1px 1px 8px #666;
   padding: 10px;
   border-radius: 5px;
-  background: rgba(255,255,255,0.90);  
+  background: rgba(255,255,255,0.93);  
 }
 .cb_ui_closebutton {
   cursor: pointer;
   position: absolute;
-  right: -8px;
-  top: -8px;
+  right: 0px;
+  top: 0px;
   background: #d00;
   border: 2px solid #fff;
   border-radius: 20px;
@@ -44,6 +47,6 @@
 }
 .cb_ui_pointerup {
   position: absolute;
-  top: -10px;
-  left: 7px;
+  top: 0px;
+  left: 17px;
 }
