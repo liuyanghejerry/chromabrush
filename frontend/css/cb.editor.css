@@ -56,11 +56,11 @@ body {
   text-shadow: 1px 1px 1px #fff;
 }
 .symbol {
-  font-size: 20px;
+  font-size: 13px;
+  font-family: 'Josefin';
   display: inline-block;
-  -webkit-transform: rotate(130deg);
   vertical-align: top;
-  line-height: 18px;
+  line-height: 16px;
 }
 
 #templates {
@@ -75,29 +75,40 @@ body {
   cursor: pointer;
 }
 
-#menu_box {
+#menu_box,
+#control_box,
+#brush_box,
+#panel_box {
   position: relative;
-  z-index: 3;
   background: #fafafa;
   -webkit-box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+}
+#menu_box {
+  z-index: 3;
   padding: 0px 5px;
 }
+
+#control_box {
+  z-index: 2;
+  margin: 10px 0 0 0;
+  border-radius: 0 10px 0 0;
+}
+
+#brush_box {
+  margin: 0 10px 0 10px;
+  border-radius: 10px 10px 0 0;
+}
+
+#panel_box {
+  margin: 10px 0 0 0;
+  border-radius: 10px 0 0 0;
+  padding: 10px
+}
+
 .cb_ui_menuitem {
   padding: 5px;
   display: inline-block;
   cursor: pointer;
   color: #000;
   text-shadow: 1px 1px 1px #aaa;
-}
-
-#control_box {
-  position: relative;
-  z-index: 2;
-  margin: 10px 0;
-  background: #fafafa;
-  border-radius: 0 10px 10px 0;
-  border-color: #fff;
-  border-style: solid;
-  border-width: 0;
-  -webkit-box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
 }
