@@ -25,6 +25,7 @@ cb.Presenter = Class.extend({
     this.layers = [];
     this.brushes = {};
     this.currentbrush = null;
+    this.currentbrushicon = null;
     this.currentlayer = -1;
     var myself = this;
     
@@ -275,20 +276,22 @@ cb.Presenter = Class.extend({
     // Select another layer.
     this.selectLayer(index == 0 ? 0 : index - 1);
   },
-  addBrush: function(name, brush) {
+  addBrush: function(name, icon, brush) {
     this.brushes[name] = brush;
     brush.setPresenter(this);
-    var brush_selection = $('<div class="box" />');
-    brush_selection.attr('id', 'brush_select_' + name)
-                   .text(name)
-                   .css('cursor', 'pointer')
-                   .css('color', 'gray');
-    var myself = this;
-    brush_selection.bind('click', function(evt) {
-      myself.selectBrush(name);
-      myself._triggerEvent('controlchange');
-    });
-    this.brush_box.append(brush_selection);
+
+    var myself = this;    
+    $(icon)
+        .bind('selected', function(evt) {
+            myself.selectBrush(name);
+            myself._triggerEvent('controlchange');
+            if (myself.currentbrushicon != null) {
+              myself.currentbrushicon.deselect();
+            }
+            myself.currentbrushicon = icon;
+        });
+
+    icon.appendTo(this.brush_box);
   },
   getCurrentLayer: function() {
     if (this.currentlayer > -1) {

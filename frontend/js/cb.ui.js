@@ -8,6 +8,10 @@ cb.ui.CLASS_POPUPWRAP = 'cb_ui_popupwrap';
 cb.ui.CLASS_MODALBG = 'cb_ui_modalbg';
 cb.ui.CLASS_CLOSEBUTTON = 'cb_ui_closebutton';
 cb.ui.CLASS_MENUITEM = 'cb_ui_menuitem';
+cb.ui.CLASS_ICON = 'cb_ui_icon';
+cb.ui.CLASS_ICON_NORMAL = 'cb_ui_icon_normal';
+cb.ui.CLASS_ICON_SELECTED = 'cb_ui_icon_selected';
+cb.ui.CLASS_ICON_HOVER = 'cb_ui_icon_hover';
 
 cb.ui.CLASS_POINTERUP = 'cb_ui_pointerup';
 cb.ui.URL_POINTERUP = '/img/pointer-up.png';
@@ -110,6 +114,75 @@ cb.ui.PointingPopup = cb.ui.Popup.extend({
   show: function() {
     this._super();
     this.adjustPosition();
+  }
+});
+
+cb.ui.Icon = Class.extend({
+  init: function(icon_url, width, height) {
+    this.selectd = false;
+    
+    this._width = width;
+    this._height = height;
+
+    this._dom_wrap = $('<div>&nbsp;</div>');
+    this._dom_wrap
+        .addClass(cb.ui.CLASS_ICON)
+        .bind('mouseenter', $.proxy(this, '_onMouseEnter'))
+        .bind('mouseleave', $.proxy(this, '_onMouseLeave'))
+        .bind('click', $.proxy(this,'_onMouseClick'))
+        .css('background', 'url(' + icon_url + ')')
+        .css('width', width + 'px')
+        .css('height', height + 'px')
+        .append(this._dom_icon);
+        
+    this._setNormal();
+  },
+  _onMouseEnter: function(evt) {
+    if (!this.selected) {
+      this._setHover();
+    }
+  },
+  _onMouseLeave: function(evt) {
+    if (!this.selected) {
+      this._setNormal();
+    }
+  },
+  _onMouseClick: function(evt) {
+    this.select();
+  },
+  _setNormal: function() {
+    this._dom_wrap
+        .removeClass(cb.ui.CLASS_ICON_SELECTED)
+        .removeClass(cb.ui.CLASS_ICON_HOVER)
+        .addClass(cb.ui.CLASS_ICON_NORMAL)
+        .css('background-position', '0 0');    
+  },
+  _setSelected: function() {
+    this._dom_wrap
+        .removeClass(cb.ui.CLASS_ICON_NORMAL)
+        .removeClass(cb.ui.CLASS_ICON_HOVER)
+        .addClass(cb.ui.CLASS_ICON_SELECTED)
+        .css('background-position', '0 -' + this._height + 'px');
+  },
+  _setHover: function() {
+    this._dom_wrap
+        .removeClass(cb.ui.CLASS_ICON_SELECTED)
+        .removeClass(cb.ui.CLASS_ICON_NORMAL)
+        .addClass(cb.ui.CLASS_ICON_HOVER)
+        .css('background-position', '0 -' + this._height * 2 + 'px');
+  },
+  appendTo: function(parent) {
+    $(parent).append(this._dom_wrap);
+  },
+  select: function() {
+    this.selected = true;
+    this._setSelected();
+    $(this).trigger('selected');
+  },
+  deselect: function() {
+    this.selected = false;
+    this._setNormal();
+    $(this).trigger('deselected');
   }
 });
 

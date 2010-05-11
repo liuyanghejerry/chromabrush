@@ -42,12 +42,18 @@
         $(presenter).bind('layerorderchange', function(){
             sound.play('/audio/bloop01.ogg'); });
         
-        presenter.addBrush('pencil', new cb.PencilBrush());
-        presenter.addBrush('pen', new cb.PenBrush());
-        presenter.addBrush('eraser', new cb.EraserBrush());
-        presenter.addBrush('line', new cb.LineBrush());
-        presenter.addBrush('fill', new cb.FillBrush());
-        presenter.addBrush('move', new cb.MoveTool());
+        var icon = new cb.ui.Icon('/img/brush-pen.png', 50, 50);
+        presenter.addBrush('pencil', icon, new cb.PencilBrush());
+        icon = new cb.ui.Icon('/img/brush-pen.png', 50, 50); 
+        presenter.addBrush('pen', icon, new cb.PenBrush());
+        icon = new cb.ui.Icon('/img/brush-eraser.png', 50, 50);
+        presenter.addBrush('eraser', icon, new cb.EraserBrush());
+        icon = new cb.ui.Icon('/img/brush-line.png', 50, 50);
+        presenter.addBrush('line', icon, new cb.LineBrush());
+        icon = new cb.ui.Icon('/img/brush-fill.png', 50, 50);
+        presenter.addBrush('fill', icon, new cb.FillBrush());
+        icon = new cb.ui.Icon('/img/brush-move.png', 50, 50);
+        presenter.addBrush('move', icon, new cb.MoveTool());
         presenter.selectBrush('pen');
         
         var toolbar = new cb.ui.Menu();
@@ -60,6 +66,11 @@
   </head>
   <body onload="init();">
     <div id="templates">
+      <img src='/img/brush-fill.png' id="icon-fill" />
+      <img src='/img/brush-eraser.png' id="icon-eraser" />
+      <img src='/img/brush-line.png' id="icon-line" />
+      <img src='/img/brush-move.png' id="icon-move" />
+      <img src='/img/brush-pen.png' id="icon-pen" />
       <span id="menuitem-system"><span class="symbol">&#9824;</span></span>
       <div id="menu-system">
         <div>System menu entry 1</div>
