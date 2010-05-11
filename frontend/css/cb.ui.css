@@ -52,4 +52,5 @@
 }
 .cb_ui_icon {
   cursor: pointer;
+  display: inline-block;
 }

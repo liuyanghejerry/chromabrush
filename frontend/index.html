@@ -43,9 +43,8 @@
             sound.play('/audio/bloop01.ogg'); });
         
         var icon = new cb.ui.Icon('/img/brush-pen.png', 50, 50);
-        presenter.addBrush('pencil', icon, new cb.PencilBrush());
-        icon = new cb.ui.Icon('/img/brush-pen.png', 50, 50); 
         presenter.addBrush('pen', icon, new cb.PenBrush());
+        icon.select();
         icon = new cb.ui.Icon('/img/brush-eraser.png', 50, 50);
         presenter.addBrush('eraser', icon, new cb.EraserBrush());
         icon = new cb.ui.Icon('/img/brush-line.png', 50, 50);
@@ -54,7 +53,6 @@
         presenter.addBrush('fill', icon, new cb.FillBrush());
         icon = new cb.ui.Icon('/img/brush-move.png', 50, 50);
         presenter.addBrush('move', icon, new cb.MoveTool());
-        presenter.selectBrush('pen');
         
         var toolbar = new cb.ui.Menu();
         toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
