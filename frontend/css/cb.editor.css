@@ -81,6 +81,7 @@ body {
 #panel_box {
   position: relative;
   background: #fafafa;
+  background: #ddd;
   -webkit-box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
 }
 #menu_box {
