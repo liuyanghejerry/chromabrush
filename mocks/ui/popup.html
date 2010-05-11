@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/ejohn.Class.js"></script>
+    <script src="/js/cb.ui.js"></script>
+    <link rel="stylesheet" href="/css/cb.ui.css" />
+    <style>
+      .menuitem:hover {
+        background: #36b;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <a id="linkPopup01" href="javascript:void(0);">Open Modal Popup</a><br />
+    <a id="linkPopup02" href="javascript:void(0);">Open Pointing Popup</a>
+    <ul>
+      <li>Item 1</li>
+      <li><span id="target01">Item 2</span></li>
+      <li>Item 3</li>
+    </ul>
+    <div id="menu">
+      <h1>Pointing popup</h1>
+      <p>This popup will point at DOM</p>
+      <div class="menuitem">Item 1</div>
+      <div class="menuitem">Item 2</div>
+    </div>
+    <script>
+      var modalPopup = new cb.ui.ModalPopup('<h1>This is popup content</h1>', {closeable:true});
+      document.getElementById('linkPopup01').addEventListener('click', function() {
+        modalPopup.show();
+      }, false);
+      
+      var pointingPopup = new cb.ui.PointingPopup('#menu', '#target01', {closeable:false, autoclose:true});
+      document.getElementById('linkPopup02').addEventListener('click', function() {
+        pointingPopup.show();
+      }, false);
+    </script>
+  </body>
+</html>
