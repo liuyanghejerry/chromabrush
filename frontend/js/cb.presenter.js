@@ -129,6 +129,7 @@ cb.Presenter = Class.extend({
   },
   _getRelativeMousePos: function(evt, elem) {
     var offset = $(elem).offset();
+    
     return {
       'x' : evt.pageX - offset.left,
       'y' : evt.pageY - offset.top

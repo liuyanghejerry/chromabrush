@@ -50,6 +50,15 @@ cb.PencilBrush = cb.Brush.extend({
           this.presenter.currentBrushSize(),
           this.presenter.currentColor());
     }
+
+    var toollayer = this.presenter.getToolLayer();
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    var pos = this.presenter.getCurrentLayer().getPosition();
+    var adjX = x + pos.x;
+    var adjY = y + pos.y;
+    
+    toollayer.clear();
+    toollayer.paintCircle(adjX, adjY, radius, 1, '#000000');
   }
 });
 
@@ -69,6 +78,15 @@ cb.PenBrush = cb.Brush.extend({
     this.previousX = this.previousY = null;
   },
   onMouseMove: function(x, y, evt) {
+    var toollayer = this.presenter.getToolLayer();
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    var pos = this.presenter.getCurrentLayer().getPosition();
+    var adjX = x + pos.x;
+    var adjY = y + pos.y;
+
+    toollayer.clear();
+    toollayer.paintCircle(adjX, adjY, radius, 1, '#000000');
+    
     if (!this.previousX) { return; }
     var layer = this.presenter.getCurrentLayer();
     layer.paintLine(
@@ -100,6 +118,14 @@ cb.EraserBrush = cb.Brush.extend({
       var layer = this.presenter.getCurrentLayer();
       layer.erasePixel(x, y, this.presenter.currentBrushSize());
     }
+    var toollayer = this.presenter.getToolLayer();
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    var pos = this.presenter.getCurrentLayer().getPosition();
+    var adjX = x + pos.x;
+    var adjY = y + pos.y;
+
+    toollayer.clear();
+    toollayer.paintCircle(adjX, adjY, radius, 1, '#000000');
   }
 });
 
@@ -157,6 +183,17 @@ cb.FillBrush = cb.Brush.extend({
       return;
     }
     layer.paintFill(x, y, this.presenter.currentColor());
+  },
+  onMouseMove: function(x, y, evt) {
+    var toollayer = this.presenter.getToolLayer();
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    var pos = this.presenter.getCurrentLayer().getPosition();
+    var adjX = x + pos.x;
+    var adjY = y + pos.y;
+
+    toollayer.clear();
+    toollayer.paintLine(adjX - radius, adjY, adjX + radius, adjY, 1, '#000000');
+    toollayer.paintLine(adjX, adjY - radius, adjX, adjY + radius, 1, '#000000');
   }
 });
 
@@ -177,6 +214,16 @@ cb.MoveTool = cb.Brush.extend({
     this.presenter.getToolLayer().clear();
   },
   onMouseMove: function(x, y, evt) {
+    var toollayer = this.presenter.getToolLayer();
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    var pos = this.presenter.getCurrentLayer().getPosition();
+    var adjX = x + pos.x;
+    var adjY = y + pos.y;
+    
+    toollayer.clear();
+    toollayer.paintLine(adjX - radius, adjY, adjX + radius, adjY, 1, '#000000');
+    toollayer.paintLine(adjX, adjY - radius, adjX, adjY + radius, 1, '#000000');
+
     if (!this.startX) { return; }
     var canvas_position = this.presenter.getCanvasMousePos(evt);
     var layer = this.presenter.getCurrentLayer();

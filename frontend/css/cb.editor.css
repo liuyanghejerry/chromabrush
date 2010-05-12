@@ -45,6 +45,9 @@ body {
 .canvas-wrap {
   background: #aaa;
 }
+.canvas-wrap canvas {
+  cursor: none !important;
+}
 
 #logo {
   font: 30px 'Josefin';
