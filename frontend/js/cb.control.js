@@ -205,8 +205,8 @@ cb.BrushSizeSelector = Class.extend({
     container.append($('<br>'));
 
     this.MinSize = 1.0;
-    this.MaxSize = 8.0;
-    this.size = 1.0;
+    this.MaxSize = 60.0;
+    this.size = 5.0;
     this.dragging = false;
 
     var myself = this;
