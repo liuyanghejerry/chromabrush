@@ -102,8 +102,8 @@ cb.Presenter = Class.extend({
     
     this.base_layer = new cb.Layer(this.canvas_width, this.canvas_height, 0);
     this.base_layer.fill('#fff');
-    this.base_layer.paintGrid(cb.PixelSize * 5, '#eee');
-    this.base_layer.paintGrid(cb.PixelSize * 20, '#ccc');
+    this.base_layer.paintGrid(10, '#eee');
+    this.base_layer.paintGrid(100, '#ccc');
     this.canvas_box.append(this.base_layer.getCanvas());
 
     this.tool_layer = new cb.Layer(this.canvas_width, this.canvas_height, 100);
