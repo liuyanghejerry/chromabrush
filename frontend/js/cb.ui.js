@@ -175,14 +175,18 @@ cb.ui.Icon = Class.extend({
     $(parent).append(this._dom_wrap);
   },
   select: function() {
-    this.selected = true;
-    this._setSelected();
-    $(this).trigger('selected');
+    if (!this.selected) {
+      this.selected = true;
+      this._setSelected();
+      $(this).trigger('selected');
+    }
   },
   deselect: function() {
-    this.selected = false;
-    this._setNormal();
-    $(this).trigger('deselected');
+    if (this.selected) {
+      this.selected = false;
+      this._setNormal();
+      $(this).trigger('deselected');
+    }
   }
 });
 

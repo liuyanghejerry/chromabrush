@@ -24,10 +24,18 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
   var y0 = Math.floor(y / cb.PixelSize);
   var context = canvas.getContext('2d');
   var stack = [x0, y0];
+  ///rgba\((\d+),\w(\d+),\w\)
+  var color_matches = /rgba\((\d{1,3}),\W(\d{1,3}),\W(\d{1,3}),\W(\d{1,3})\)/.exec(color);
+  var color_r = parseInt(color_matches[1], 10);
+  var color_g = parseInt(color_matches[2], 10);
+  var color_b = parseInt(color_matches[3], 10);
+  var color_a = parseInt(color_matches[4], 10);
+  console.log(color);
 
   // Read the image pixels into memory array and prepare a function for
   // accessing that array.
   var image = context.getImageData(0, 0, canvas.width, canvas.height);
+  var newimage = context.createImageData(image.width, image.height);
   var pixel = function(bx, by) {
     // Read the color of the specified pixel.
     var x = bx * cb.PixelSize;
@@ -59,9 +67,16 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
     var x = bx * cb.PixelSize;
     var y = by * cb.PixelSize;
     var p = (x + y * canvas.width) * 4;
-    // We just need to set the color to something other than seed_color;
-    image.data[p] = seed_color[0] ^ 0x01;
-    cb.util.canvas.paintPixel(canvas, x, y, 1.0, color);
+    var p_mod = 0;
+    for (var i = 0; i < cb.PixelSize; i++) {
+      for (var j = 0; j < cb.PixelSize; j++) {
+        p_mod = ((x + i) + (y + j) * canvas.width) * 4;
+        image.data[p_mod] = color_r;
+        image.data[p_mod + 1] = color_g;
+        image.data[p_mod + 2] = color_b;
+        image.data[p_mod + 3] = color_a;
+      }
+    }
 
     // Later we need to check the scanlines above and blow this line.
     if (by > 0) {
@@ -105,6 +120,8 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
     var x = stack.pop();
     fillLine(x, y);
   }
+  
+  context.putImageData(image, 0, 0);
 };
 
 cb.util.canvas.paintLine = function(canvas, x0, y0, x1, y1, brush_size, color) {
