@@ -68,9 +68,8 @@ cb.PenBrush = cb.Brush.extend({
   },
   onMouseDown: function(x, y, evt) {
     var layer = this.presenter.getCurrentLayer();
-    layer.paintPixel(x, y,
-        this.presenter.currentBrushSize(),
-        this.presenter.currentColor());
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    layer.fillCircle(x, y, radius, this.presenter.currentColor());
     this.previousX = x;
     this.previousY = y;
   },
@@ -163,16 +162,26 @@ cb.LineBrush = cb.Brush.extend({
     this.presenter.getToolLayer().clear();
   },
   onMouseMove: function(x, y, evt) {
-    if (!this.startX) { return; }
+    var toollayer = this.presenter.getToolLayer();
     var layer_position = this.presenter.getCurrentLayer().getPosition();
-    this.presenter.getToolLayer().clear();
-    this.presenter.getToolLayer().paintLine(
-        this.startX + layer_position.x, 
-        this.startY + layer_position.y, 
-        x + layer_position.x, 
-        y + layer_position.y, 
-        0.3, 
-        this.presenter.currentColor());
+    var adjX = x + layer_position.x;
+    var adjY = y + layer_position.y;
+    
+    toollayer.clear();
+    
+    if (this.startX) {
+      toollayer.paintLine(
+          this.startX + layer_position.x, 
+          this.startY + layer_position.y, 
+          adjX, 
+          adjY, 
+          this.presenter.currentBrushSize(), 
+          this.presenter.currentColor());
+    }
+    
+    var radius = this.presenter.currentBrushSize() / 2 * cb.PixelSize;
+    toollayer.paintLine(adjX - radius, adjY, adjX + radius, adjY, 1, '#000000');
+    toollayer.paintLine(adjX, adjY - radius, adjX, adjY + radius, 1, '#000000');
   }
 });
 

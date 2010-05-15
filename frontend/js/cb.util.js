@@ -125,6 +125,15 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
 };
 
 cb.util.canvas.paintLine = function(canvas, x0, y0, x1, y1, brush_size, color) {
+  var context = canvas.getContext('2d');
+  context.moveTo(x0, y0);
+  context.lineTo(x1, y1);
+  context.lineWidth = brush_size;
+  context.lineCap = 'round';
+  context.strokeStyle = color;
+  context.stroke();
+};
+cb.util.canvas.paintSquareLine = function(canvas, x0, y0, x1, y1, brush_size, color) {
   var delta_x = x1 >= x0 ? 1 : -1;
   var delta_y = y1 >= y0 ? 1 : -1;
   var distance_x = (x1 - x0) * delta_x;

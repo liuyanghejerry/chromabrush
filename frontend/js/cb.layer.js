@@ -98,16 +98,26 @@ cb.Layer = Class.extend({
   },
   paintLine: function(x0, y0, x1, y1, brush_size, color) {
     var canvas = this.getCanvas();
+    var context = this.getContext();
+    context.beginPath();
     cb.util.canvas.paintLine(canvas, x0, y0, x1, y1, brush_size, color);
     this._onUpdated();
   },
   paintCircle: function(x, y, radius, brush_size, color) {
     var context = this.getContext();
+    context.beginPath();
     context.strokeStyle = color;
     context.lineWidth = brush_size;
     context.arc(x, y, radius, 0, Math.PI * 2, false);
     context.stroke();
+    this._onUpdated();
+  },
+  fillCircle: function(x, y, radius, color) {
+    var context = this.getContext();
     context.beginPath();
+    context.fillStyle = color;
+    context.arc(x, y, radius, 0, Math.PI * 2, false);
+    context.fill();
     this._onUpdated();
   },
   paintLayerBox: function(layer, line_size, color) {
