@@ -146,11 +146,17 @@ cb.Layer = Class.extend({
     this.canvas.css('top', y + 'px');
   },
   getSize: function() {
-    var w = this.canvas.css('width');
-    var h = this.canvas.css('height');
     return {
-      w: w.substring(0, w.length - 2) - 0,
-      h: h.substring(0, h.length - 2) - 0
+      w: this.width,
+      h: this.height
     };
+  },
+  getImageData: function() {
+   var data = this.getContext().getImageData(0, 0, this.width, this.height);
+   return data;
+  },
+  setImageData: function(data) {
+    var context = this.getContext();
+    context.putImageData(data, 0, 0);
   }
 });

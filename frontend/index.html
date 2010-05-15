@@ -26,6 +26,7 @@
     <script src="js/cb.presenter.js"></script>
     <script src="js/cb.sound.js"></script>
     <script src="js/cb.ui.js"></script>
+    <script src="js/cb.filters.js"></script>
     <link rel="stylesheet" href="css/hbox.vbox.css" />
     <link rel="stylesheet" href="css/cb.editor.css" />
     <link rel="stylesheet" href="css/cb.ui.css" />
@@ -36,11 +37,11 @@
         
         var sound = new cb.Sound();
         $(presenter).bind('import', function(){
-            sound.play('/audio/bloop02.ogg'); });
+            sound.play('/audio/bloop03.ogg'); });
         $(presenter).bind('controlchange', function(){
             sound.play('/audio/click01.ogg'); });
         $(presenter).bind('layerorderchange', function(){
-            sound.play('/audio/bloop01.ogg'); });
+            sound.play('/audio/bloop03.ogg'); });
         
         var icon = new cb.ui.Icon('/img/brush-pen.png', 50, 50);
         presenter.addBrush('pen', icon, new cb.PenBrush());
@@ -54,10 +55,20 @@
         icon = new cb.ui.Icon('/img/brush-move.png', 50, 50);
         presenter.addBrush('move', icon, new cb.MoveTool());
         
+        $('#filter-blur').click(function() {
+          var blur = new cb.filters.Blur(4);
+          $(blur).bind('progress', function(evt, progress) {
+            console.log('Blur progress', progress);
+          });
+          blur.filter(presenter.getCurrentLayer());
+        });
+        
         var toolbar = new cb.ui.Menu();
         toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
         toolbar.addEntry('#menuitem-file', new cb.ui.PointingPopup('#menu-file'));
         toolbar.addEntry('#menuitem-edit', new cb.ui.PointingPopup('#menu-edit'));
+        toolbar.addEntry('#menuitem-filter', new cb.ui.PointingPopup('#menu-filter'));
+        
         presenter.addToolbar(toolbar);
       };
     </script>
@@ -84,6 +95,10 @@
         <div>Edit menu entry 1</div>
         <div>Edit menu entry 2</div>
         <div>Edit menu entry 3</div>
+      </div>
+      <span id="menuitem-filter">Filter</span>
+      <div id="menu-filter">
+        <div id="filter-blur">Blur (JavaScript)</div>
       </div>
     </div>
   </body>
