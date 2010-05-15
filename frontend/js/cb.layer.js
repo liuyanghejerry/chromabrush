@@ -27,9 +27,14 @@ cb.Layer = Class.extend({
                .css('left', '0')
                .css('top', '0')
                .css('z-index', zindex);
+    this._last_updated = 0;
   },
   _onUpdated: function() {
-    $(this).trigger('updated');
+    var now = new Date().getTime();
+    if (now - this._last_updated > 500) {
+      this._last_updated = now;
+      $(this).trigger('updated');
+    }
   },
   clear: function() {
     var context = this.getContext();
@@ -112,6 +117,13 @@ cb.Layer = Class.extend({
     context.stroke();
     this._onUpdated();
   },
+  paintRect: function(x, y, w, h, brush_size, color) {
+    var context = this.getContext();
+    context.strokeStyle = color;
+    context.lineWidth = brush_size;
+    context.strokeRect(x, y, w, h);
+    this._onUpdated();
+  },
   fillCircle: function(x, y, radius, color) {
     var context = this.getContext();
     context.beginPath();
@@ -123,13 +135,11 @@ cb.Layer = Class.extend({
   paintLayerBox: function(layer, line_size, color) {
     var pos = layer.getPosition();
     var size = layer.getSize();
-    var context = this.getContext();
-    context.strokeStyle = color;
-    context.lineWidth = line_size;
-    context.strokeRect(pos.x - line_size / 2.0,
-                       pos.y - line_size / 2.0,
-                       size.w + line_size,
-                       size.h + line_size);
+    var x = pos.x - line_size / 2.0;
+    var y = pos.y - line_size / 2.0;
+    var w = size.w + line_size;
+    var h = size.h + line_size;
+    this.paintRect(x, y, w, h, line_size, color);
   },
   /**
    * Paints a square pixel on this canvas.

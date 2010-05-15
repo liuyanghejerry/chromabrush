@@ -124,7 +124,12 @@ cb.EraserBrush = cb.Brush.extend({
     var adjY = y + pos.y;
 
     toollayer.clear();
-    toollayer.paintCircle(adjX, adjY, radius, 1, '#000000');
+    toollayer.paintRect(
+        adjX - radius, 
+        adjY - radius, 
+        radius * 2, 
+        radius * 2, 
+        1, '#000000');
   }
 });
 
