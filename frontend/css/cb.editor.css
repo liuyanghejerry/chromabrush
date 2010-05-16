@@ -21,6 +21,10 @@ body {
   overflow: hidden;
   font: 14px Arial;
 }
+hr {
+  border: 0;
+  border-bottom: 1px solid #666;
+}
 .layer {
   cursor: move;
   padding: 7px;

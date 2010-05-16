@@ -56,12 +56,39 @@
         presenter.addBrush('move', icon, new cb.MoveTool());
 
         var progressBar = new cb.ui.ProgressPopup('', {closeable:false});
+        var showNotifications = false;
+        
+        function showFinishedNotification() {
+          if (window.webkitNotifications.checkPermission() == 0) {
+            var notification = window.webkitNotifications.createNotification(
+                '/img/icon-notification.png', 
+                'Completed', 
+                'The filter you ran has finished!');
+            notification.show();
+          }
+        };
+        
+        function toggleNotifications() {
+          showNotifications = !showNotifications;
+          if (showNotifications) {
+            $('#filter-notifications').text('Disable notifications');
+            if (window.webkitNotifications.checkPermission() != 0) {
+              window.webkitNotifications.requestPermission();
+            } 
+          } else {
+            $('#filter-notifications').text('Show notifications');
+          }
+        };
+        
         function getBlurHandler(level) {
           return function() {
             var progress = 0;
             var blur = new cb.filters.Blur(level);
             $(blur).bind('progress', function(evt, progress) {
               progressBar.setProgress(progress);
+              if (progress == 100 && showNotifications == true) {
+                showFinishedNotification();
+              }
             });
             blur.filter(presenter.getCurrentLayer());            
           };
@@ -69,6 +96,7 @@
         
         $('#filter-blur').click(getBlurHandler(1));
         $('#filter-blurmore').click(getBlurHandler(5));
+        $('#filter-notifications').click(toggleNotifications);
         
         $('#file-new').click($.proxy(presenter, 'newImage'));
         
@@ -119,6 +147,10 @@
         <ul>
           <li id="filter-blur">Blur (JavaScript)</li>
           <li id="filter-blurmore">Blur More (JavaScript)</li>
+        </ul>
+        <hr />
+        <ul>
+          <li id="filter-notifications">Show notifications</li>
         </ul>
       </div>
       <div id="popup-about">
