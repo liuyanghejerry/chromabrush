@@ -243,7 +243,8 @@ cb.ui.Menu = Class.extend({
   },
   _showPopup: function(evt) {
     if (this._open_menu != null) {
-      this._open_menu.hide();
+      setTimeout($.proxy(this._open_menu, 'hide'), 200);
+      return;
     }
     this._open_menu = evt.data.popup;
     this._open_menu.show();

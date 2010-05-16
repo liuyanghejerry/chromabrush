@@ -224,6 +224,12 @@ cb.MoveTool = cb.Brush.extend({
     this.startLY = layer_position.y;
   },
   onMouseUp: function(x, y, evt) {
+    if (this.startX) {
+      var canvas_position = this.presenter.getCanvasMousePos(evt);
+      this.presenter.getCurrentLayer().lockPosition(
+        this.startLX + canvas_position.x - this.startX,
+        this.startLY + canvas_position.y - this.startY);
+    }
     this.startX = this.startY = this.startLX = this.startLY = null;
     this.presenter.getToolLayer().clear();
   },

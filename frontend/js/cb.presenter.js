@@ -154,7 +154,9 @@ cb.Presenter = Class.extend({
           var img = new Image();
           img.src = this.responseText;
           img.addEventListener('load', function() {
-            var layer = myself.addLayer(img.width, img.height);
+            var layer_width = Math.max(img.width, this.canvas_width);
+            var layer_height = Math.max(img.height, this.canvas_height);
+            var layer = myself.addLayer(layer_width, layer_height);
             layer.paintImage(img, 0, 0);
             myself._triggerEvent('import');
           });
@@ -339,5 +341,11 @@ cb.Presenter = Class.extend({
   },
   addToolbar: function(toolbar) {
     toolbar.appendTo(this.menu_box);
+  },
+  getCanvasSize: function() {
+    return {
+      'w' : this.canvas_width,
+      'h' : this.canvas_height
+    };
   }
 });

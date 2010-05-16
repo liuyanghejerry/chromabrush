@@ -21,6 +21,8 @@ cb.Layer = Class.extend({
     this.canvas = $('<canvas></canvas>');
     this.width = width;
     this.height = height;
+    this.view_width = width;
+    this.view_height = height;
     this.canvas.attr('width', width)
                .attr('height', height)
                .css('position', 'absolute')
@@ -98,7 +100,7 @@ cb.Layer = Class.extend({
   },
   paintImage: function(img, x, y) {
     var context = this.getContext();
-    context.drawImage(img, 0, 0);
+    context.drawImage(img, x, y);
     this._onUpdated();
   },
   paintLine: function(x0, y0, x1, y1, brush_size, color) {
@@ -164,6 +166,46 @@ cb.Layer = Class.extend({
   setPosition: function(x, y) {
     this.canvas.css('left', x + 'px');
     this.canvas.css('top', y + 'px');
+  },
+  lockPosition: function(x, y) {
+    if (x < 0) {
+      var new_width = this.width;
+      if ((this.width + x) < this.view_width) { 
+        new_width = this.view_width + Math.abs(x);
+      }
+      var new_left = x;
+    } else {
+      var new_width = this.width + x;
+      var new_left = 0;
+    }
+    
+    if (y < 0) {
+      var new_height = this.height;
+      if ((this.height + y) < this.view_height) {
+        new_height = this.view_height + Math.abs(y);
+      } 
+      var new_top = y;
+    } else {
+      var new_height = this.height + y;
+      var new_top = 0;
+    }  
+    
+    var old_canvas = this.canvas.get(0);
+
+    this.width = new_width;
+    this.height = new_height;
+    
+    this.canvas = $('<canvas>');
+    this.canvas
+        .css('position', 'absolute')
+        .css('z-index', $(old_canvas).css('z-index'))
+        .attr('width', new_width)
+        .attr('height', new_height)
+        .css('left', new_left)
+        .css('top', new_top);
+    
+    this.paintImage(old_canvas, x - new_left, y - new_top);
+    $(old_canvas).before(this.canvas).remove();
   },
   getSize: function() {
     return {
