@@ -145,17 +145,7 @@ cb.Presenter = Class.extend({
       var file = files[i];
       var myself = this;
       var xhr = new XMLHttpRequest();
-      /*
-      xhr.open('post', '/image', true);
-      xhr.onreadystatechange = function () {
-        if (this.readyState != 4) { return; }
-        console.log('readystatechange', this, this.responseText);
-      };
-      xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-      xhr.setRequestHeader('X-File-Name', file.fileName);
-      xhr.setRequestHeader('X-File-Size', file.fileSize);
-      xhr.send(file);
-      */
+
       xhr.open('post', '/image', true);
       xhr.onreadystatechange = function() {
         if (this.readyState != 4) { return; }
@@ -164,7 +154,6 @@ cb.Presenter = Class.extend({
           var img = new Image();
           img.src = this.responseText;
           img.addEventListener('load', function() {
-            //myself.getCurrentLayer().paintImage(img, 0, 0);
             var layer = myself.addLayer(img.width, img.height);
             layer.paintImage(img, 0, 0);
             myself._triggerEvent('import');
@@ -212,6 +201,15 @@ cb.Presenter = Class.extend({
   },
   _triggerEvent: function(name) {
     $(this).trigger(name);
+  },
+  newImage: function() {
+    while (this.layers.length > 0) {
+      var layer = this.layers.pop();
+      $(layer.getCanvas()).remove();
+    }
+    
+    this.layer_box.find('div[layer]').remove();
+    this.addLayer();
   },
   addLayer: function(width, height) {
     if (!width) {

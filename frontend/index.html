@@ -69,7 +69,8 @@
         
         $('#filter-blur').click(getBlurHandler(1));
         $('#filter-blurmore').click(getBlurHandler(5));
-
+        
+        $('#file-new').click($.proxy(presenter, 'newImage'));
         
         var toolbar = new cb.ui.Menu();
         toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
@@ -95,9 +96,7 @@
       <span id="menuitem-file">File</span>
       <div id="menu-file" class="menu">
         <ul>
-          <li>File menu entry 1</li>
-          <li>File menu entry 2</li>
-          <li>File menu entry 3</li>
+          <li id="file-new">New</li>
         </ul>
       </div>
       <span id="menuitem-edit">Edit</span>
