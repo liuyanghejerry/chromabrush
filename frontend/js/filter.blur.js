@@ -32,10 +32,12 @@ onmessage = function (event) {
     imagedata.data[index + 3] = a;
   };
   
+  var lastprogress = 0;
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {
       var progress = Math.round((((y * width) + height) / num_pixels) * 100);
-      if (progress % 2 == 0) {
+      if (progress > lastprogress) {
+        lastprogress = progress;
         postMessage({status: 'progress', progress: progress});
       }
     

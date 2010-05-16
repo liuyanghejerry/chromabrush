@@ -54,16 +54,22 @@
         presenter.addBrush('fill', icon, new cb.FillBrush());
         icon = new cb.ui.Icon('/img/brush-move.png', 50, 50);
         presenter.addBrush('move', icon, new cb.MoveTool());
+
+        var progressBar = new cb.ui.ProgressPopup('', {closeable:false});
+        function getBlurHandler(level) {
+          return function() {
+            var progress = 0;
+            var blur = new cb.filters.Blur(level);
+            $(blur).bind('progress', function(evt, progress) {
+              progressBar.setProgress(progress);
+            });
+            blur.filter(presenter.getCurrentLayer());            
+          };
+        };
         
-        $('#filter-blur').click(function() {
-          var progress = 0;
-          var blur = new cb.filters.Blur(4);
-          var popup = new cb.ui.ProgressPopup('', {closeable:false});
-          $(blur).bind('progress', function(evt, progress) {
-            popup.setProgress(progress);
-          });
-          blur.filter(presenter.getCurrentLayer());
-        });
+        $('#filter-blur').click(getBlurHandler(1));
+        $('#filter-blurmore').click(getBlurHandler(5));
+
         
         var toolbar = new cb.ui.Menu();
         toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
@@ -101,6 +107,7 @@
       <span id="menuitem-filter">Filter</span>
       <div id="menu-filter">
         <div id="filter-blur">Blur (JavaScript)</div>
+        <div id="filter-blurmore">Blur More (JavaScript)</div>
       </div>
     </div>
   </body>
