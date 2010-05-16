@@ -78,10 +78,10 @@ body {
   text-shadow: 1px 1px 1px #fff;
 }
 .symbol {
-  font-size: 13px;
+  font-size: 14px;
   font-family: 'Josefin';
   display: inline-block;
-  vertical-align: top;
+  vertical-align: bottom;
   line-height: 16px;
 }
 
