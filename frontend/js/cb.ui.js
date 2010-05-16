@@ -12,6 +12,8 @@ cb.ui.CLASS_ICON = 'cb_ui_icon';
 cb.ui.CLASS_ICON_NORMAL = 'cb_ui_icon_normal';
 cb.ui.CLASS_ICON_SELECTED = 'cb_ui_icon_selected';
 cb.ui.CLASS_ICON_HOVER = 'cb_ui_icon_hover';
+cb.ui.CLASS_PROGRESS_BG = 'cb_ui_progress_bg';
+cb.ui.CLASS_PROGRESS_FILL = 'cb_ui_progress_fill';
 
 cb.ui.CLASS_POINTERUP = 'cb_ui_pointerup';
 cb.ui.URL_POINTERUP = '/img/pointer-up.png';
@@ -43,15 +45,19 @@ cb.ui.Popup = Class.extend({
           .click($.proxy(this, 'hide'));
       this._dom_wrap.append(this._dom_closebutton);
     }
-
+    
+    this._hidden = true;
+    
     $(document.body).append(this._dom_wrap);
   },
   show: function() {
     this._dom_wrap.removeClass(cb.ui.CLASS_HIDDEN);
+    this._hidden = false;
     $(this).trigger('showpopup');
   },
   hide: function() {
     this._dom_wrap.addClass(cb.ui.CLASS_HIDDEN);
+    this._hidden = true;
     $(this).trigger('hidepopup');
   },
 });
@@ -68,6 +74,35 @@ cb.ui.ModalPopup = cb.ui.Popup.extend({
     this._dom_wrap.removeClass(cb.ui.CLASS_HIDDEN);
     this._dom_wrap = positioner;
     $(document.body).append(this._dom_wrap);
+  }
+});
+
+cb.ui.ProgressPopup = cb.ui.ModalPopup.extend({
+  init: function(content, opt_args) {
+    this._super(content, opt_args);
+    this._progress = 0;
+    this._dom_progress_fill = $('<div>&nbsp;</div>')
+        .addClass(cb.ui.CLASS_PROGRESS_FILL);
+    
+    this._dom_progress_bg = $('<div></div>')
+        .addClass(cb.ui.CLASS_PROGRESS_BG)
+        .append(this._dom_progress_fill);
+    
+    this._dom_popup.append(this._dom_progress_bg);
+  },
+  setProgress: function(progress) {
+    if (progress < 0) {
+      progress = 0;
+    } else if (progress > 100) {
+      progress = 100;
+    }
+    this._progress = progress;
+    this._dom_progress_fill.css('width', progress + '%');
+    if (this._hidden == true && progress > 0) {
+      this.show();
+    } else if (this._hidden == false && progress == 100) {
+      this.hide();
+    }
   }
 });
 

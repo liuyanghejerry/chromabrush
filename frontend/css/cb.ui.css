@@ -8,6 +8,7 @@
   left: 0;
   top: 0;
   overflow: hidden;
+  z-index: 100;
 }
 .cb_ui_positioner .cb_ui_popupwrap {
   position: relative;
@@ -53,4 +54,14 @@
 .cb_ui_icon {
   cursor: pointer;
   display: inline-block;
+}
+.cb_ui_progress_bg {
+  width: 500px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  background: #fff;
+}
+.cb_ui_progress_fill {
+  overflow: hidden;
+  background: #36b;
 }

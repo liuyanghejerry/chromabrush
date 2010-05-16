@@ -56,9 +56,11 @@
         presenter.addBrush('move', icon, new cb.MoveTool());
         
         $('#filter-blur').click(function() {
+          var progress = 0;
           var blur = new cb.filters.Blur(4);
+          var popup = new cb.ui.ProgressPopup('', {closeable:false});
           $(blur).bind('progress', function(evt, progress) {
-            console.log('Blur progress', progress);
+            popup.setProgress(progress);
           });
           blur.filter(presenter.getCurrentLayer());
         });

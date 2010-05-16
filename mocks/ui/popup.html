@@ -22,7 +22,8 @@
   </head>
   <body>
     <a id="linkPopup01" href="javascript:void(0);">Open Modal Popup</a><br />
-    <a id="linkPopup02" href="javascript:void(0);">Open Pointing Popup</a>
+    <a id="linkPopup02" href="javascript:void(0);">Open Pointing Popup</a><br />
+    <a id="linkPopup03" href="javascript:void(0);">Open Progress Popup</a>
     <ul>
       <li>Item 1</li>
       <li><span id="target01">Item 2</span></li>
@@ -62,6 +63,21 @@
       toolbarMenu.addEntry('<span>Link 1</span>', new cb.ui.PointingPopup('#toolbarMenu01'));
       toolbarMenu.addEntry('<span>Link 2</span>', new cb.ui.PointingPopup('#toolbarMenu02'));
       toolbarMenu.appendTo('#toolbarMenuParent');
+      
+      var progressPopup = new cb.ui.ProgressPopup('', {closeable:false});
+      var progress = 0;
+      function incrementProgress() {
+        progress += 5;
+        progressPopup.setProgress(progress);
+        if (progress < 100) {
+          setTimeout(incrementProgress, 500);
+        } else {
+          progress = 0;
+        }
+      }
+      document.getElementById('linkPopup03').addEventListener('click', function() {
+        incrementProgress();
+      });
     </script>
   </body>
 </html>

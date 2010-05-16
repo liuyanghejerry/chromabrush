@@ -22,6 +22,31 @@ cb.filters.Blur = cb.filters.Filter.extend({
     this.RADIUS = radius;
   },
   filter: function(layer) {
+    worker = new Worker('/js/filter.blur.js');
+    worker.addEventListener('message', $.proxy(this, 'onMessage'), false);
+    this.LAYER = layer;
+    var size = layer.getSize();
+    worker.postMessage({
+        'imagedata': layer.getImageData(),
+        'width': size.w,
+        'height': size.h,
+        'radius': this.RADIUS
+    });
+  },
+  onMessage: function(evt) {
+    if (evt.data.status == 'progress') {
+      this._setProgress(evt.data.progress);
+    } else if (evt.data.status == 'complete') {
+      this.LAYER.setImageData(evt.data.imagedata); 
+    }
+  }
+});
+
+cb.filters.BlurNoWorker = cb.filters.Filter.extend({
+  init: function(radius) {
+    this.RADIUS = radius;
+  },
+  filter: function(layer) {
     var imagedata = layer.getImageData();
     var dim = layer.getSize();
     var sum_r, sum_g, sum_b, sum_a;
