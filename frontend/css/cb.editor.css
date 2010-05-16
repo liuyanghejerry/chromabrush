@@ -49,6 +49,25 @@ body {
   cursor: none !important;
 }
 
+.menu {
+  margin: 0;
+  padding: 10px 0 !important;
+}
+.menu ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.menu li {
+  margin: 0;
+  padding: 3px 10px;
+}
+.menu li:hover {
+  background: #36b;
+  color: #fff;
+  text-shadow: none;
+}
+
 #logo {
   font: 30px 'Josefin';
   color: #333;
@@ -112,6 +131,7 @@ body {
 }
 
 .cb_ui_menuitem {
+  font: 16px Arial;
   padding: 5px;
   display: inline-block;
   cursor: pointer;

@@ -18,6 +18,10 @@
         padding: 6px 3px;
         margin: 0px;
       }
+      h1 {
+        margin: 0;
+        padding: 20px 0;
+      }
     </style>
   </head>
   <body>
@@ -67,10 +71,10 @@
       var progressPopup = new cb.ui.ProgressPopup('', {closeable:false});
       var progress = 0;
       function incrementProgress() {
-        progress += 5;
+        progress += 1;
         progressPopup.setProgress(progress);
         if (progress < 100) {
-          setTimeout(incrementProgress, 500);
+          setTimeout(incrementProgress, 10);
         } else {
           progress = 0;
         }

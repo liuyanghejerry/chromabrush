@@ -29,9 +29,11 @@ cb.ui.Dom = Class.extend({
 
 cb.ui.Popup = Class.extend({
   init: function(content, opt_args) {
-    this._dom_popup = $('<div></div>')
-        .addClass(cb.ui.CLASS_POPUP)
-        .append($(content));
+    this._dom_popup = $(content);
+    if (this._dom_popup.get(0) == undefined) {
+      this._dom_popup = $('<div>' + content + '</div>');
+    }
+    this._dom_popup.addClass(cb.ui.CLASS_POPUP);
 
     this._dom_wrap = $('<div></div>')
         .addClass(cb.ui.CLASS_POPUPWRAP)
