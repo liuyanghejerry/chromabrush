@@ -34,12 +34,12 @@ cb.ui.Popup = Class.extend({
       this._dom_popup = $('<div>' + content + '</div>');
     }
     this._dom_popup.addClass(cb.ui.CLASS_POPUP);
-
+    
     this._dom_wrap = $('<div></div>')
         .addClass(cb.ui.CLASS_POPUPWRAP)
         .addClass(cb.ui.CLASS_HIDDEN)
         .append(this._dom_popup);
-    
+
     this._opt_args = opt_args || {};
     if (this._opt_args.closeable && this._opt_args.closeable == true) {
       this._dom_closebutton = $("<div>x</div>")

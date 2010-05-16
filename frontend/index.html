@@ -72,6 +72,11 @@
         
         $('#file-new').click($.proxy(presenter, 'newImage'));
         
+        var popupAbout = new cb.ui.ModalPopup('#popup-about', {closeable:true});
+        $('#system-about').click(function() {
+          popupAbout.show();
+        });
+        
         var toolbar = new cb.ui.Menu();
         toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
         toolbar.addEntry('#menuitem-file', new cb.ui.PointingPopup('#menu-file'));
@@ -90,8 +95,10 @@
       <img src='/img/brush-move.png' id="icon-move" />
       <img src='/img/brush-pen.png' id="icon-pen" />
       <span id="menuitem-system"><span class="symbol">&#9824;</span></span>
-      <div id="menu-system">
-        <div>System menu entry 1</div>
+      <div id="menu-system" class="menu">
+        <ul>
+          <li id="system-about">About Chromabrush</li>
+        </ul>
       </div>
       <span id="menuitem-file">File</span>
       <div id="menu-file" class="menu">
@@ -113,6 +120,28 @@
           <li id="filter-blur">Blur (JavaScript)</li>
           <li id="filter-blurmore">Blur More (JavaScript)</li>
         </ul>
+      </div>
+      <div id="popup-about">
+        <div class="popupcontent">
+          <div class="centeredtext">
+            <img src="/img/hello.png" />
+          </div>
+          <h1>About Chromabrush</h1>
+          <p>
+            Chromabrush is an online paint application written using HTML5.  
+          </p>
+          <p>
+            Originally written as a demo application for the 2010 Google I/O
+            developer conference, Chromabrush is released under an open source
+            license.  The source code for this project is hosted at 
+            <a href="http://chromabrush.googlecode.com">chromabrush.googlecode.com</a>.
+          </p>
+          <p>
+            The "official" version of Chromabrush is hosted on Google App Engine
+            and is available at
+            <a href="http://www.chromabrush.com">www.chromabrush.com</a> 
+          </p>
+        </div>
       </div>
     </div>
   </body>
