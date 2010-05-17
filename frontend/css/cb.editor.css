@@ -25,10 +25,15 @@ hr {
   border: 0;
   border-bottom: 1px solid #666;
 }
+
+#layer_box {
+  min-width: 120px;
+}
 .layer {
   cursor: move;
   padding: 7px;
-  background: #eee;
+  border-radius: 5px;
+  background: #ddd;
 }
 .layer span {
   vertical-align: middle;
@@ -40,6 +45,7 @@ hr {
   height: 30px;
   margin-right: 4px;
   border: 1px solid #aaa;
+  background: #fff;
 }
 .layer.selected {
   padding: 4px;
@@ -115,7 +121,6 @@ hr {
 #brush_box,
 #panel_box {
   position: relative;
-  background: #fafafa;
   background: #ddd;
   -webkit-box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
 }

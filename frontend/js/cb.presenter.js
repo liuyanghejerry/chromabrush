@@ -76,21 +76,21 @@ cb.Presenter = Class.extend({
     this.panel_box = $('<div class="box boxFlex0" id="panel_box"></div>');
     hbox1.append(this.panel_box);
 
-    this.layer_add_button = $('<div class="button">add</div>');
-    this.layer_add_button.css('display', 'inline');
-    this.layer_add_button.bind('click', function(evt) {
+    this.layer_add_button = new cb.ui.Icon('/img/icon-plus.png', 25, 25);
+    $(this.layer_add_button).bind('selected', function(evt) {
+      this.deselect();
       myself.addLayer();
       myself._triggerEvent('controlchange');
     });
-    this.panel_box.append(this.layer_add_button);
-  
-    this.layer_del_button = $('<div class="button">del</div>');
-    this.layer_del_button.css('display', 'inline');
-    this.layer_del_button.bind('click', function(evt) {
+    this.layer_add_button.appendTo(this.panel_box);
+
+    this.layer_del_button = new cb.ui.Icon('/img/icon-minus.png', 25, 25);
+    $(this.layer_del_button).bind('selected', function(evt) {
+      this.deselect();
       myself.removeLayer();
       myself._triggerEvent('controlchange');
     });
-    this.panel_box.append(this.layer_del_button);
+    this.layer_del_button.appendTo(this.panel_box);
     this.panel_box.append($('<hr />'));
   
     this.layer_box = $('<div class="panel" id="layer_box"></div>');
