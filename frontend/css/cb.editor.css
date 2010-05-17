@@ -93,7 +93,7 @@ hr {
   cursor: default;
   position: absolute;
   right: 15px;
-  bottom: 10px;
+  bottom: 0px;
   text-shadow: 1px 1px 1px #fff;
 }
 .symbol {
