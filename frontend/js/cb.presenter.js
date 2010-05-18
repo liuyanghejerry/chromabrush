@@ -27,6 +27,7 @@ cb.Presenter = Class.extend({
     this.currentbrush = null;
     this.currentbrushicon = null;
     this.currentlayer = -1;
+    this.lasthistoryupdate = null;
     var myself = this;
     
     $(window).bind('unload', $.proxy(this, '_cleanup'));
@@ -128,16 +129,33 @@ cb.Presenter = Class.extend({
       case 'ready':
         this._sendHistory();
         break;
+      case 'undo':
+        var layer = this.layers[evt.data.index];
+        layer.setPosition(evt.data.x, evt.data.y);
+        layer.setImageData(evt.data.imagedata);
+        $(layer).trigger('updated');
     }
   },
-  _sendHistory: function() {
+  _sendHistory: function(action) {
+    if (!action) {
+      action = 'sethistory';
+    }
+    var timestamp = new Date().getTime();
+    if (this.lasthistoryupdate != null && 
+        timestamp - this.lasthistoryupdate < 1000) {
+      return;
+    }
+    
+    console.log('_sendHistory');
+    this.lasthistoryupdate = timestamp;
+    
     var layer = this.getCurrentLayer();
     var pos = layer.getPosition();
     var size = layer.getSize();
     this.history_worker.postMessage({
-      'action': 'sethistory',
+      'action': action,
       'imagedata': layer.getImageData(),
-      'layerindex': this.currentlayer,
+      'index': this.currentlayer,
       'x': pos.x,
       'y': pos.y,
       'w': size.w,
@@ -145,6 +163,8 @@ cb.Presenter = Class.extend({
     });
   },
   _cleanup: function(evt) {
+    this.history_worker.terminate();
+    this.history_worker = null;
     
     // Clean up brush references.
     for (var name in this.brushes) {
@@ -168,7 +188,6 @@ cb.Presenter = Class.extend({
   _onDrop: function(evt) {
     var files = evt.originalEvent.dataTransfer.files;
     for (var i = 0; i < files.length; i++) {
-      console.log('file', files[i]);
       var file = files[i];
       var myself = this;
       var xhr = new XMLHttpRequest();
@@ -176,7 +195,6 @@ cb.Presenter = Class.extend({
       xhr.open('post', '/image', true);
       xhr.onreadystatechange = function() {
         if (this.readyState != 4) { return; }
-        console.log('readystatechange', this);
         if (this.responseText.indexOf('http') == 0) {
           var img = new Image();
           img.src = this.responseText;
@@ -189,7 +207,6 @@ cb.Presenter = Class.extend({
           });
         }
       };
-      console.log(file);
       xhr.setRequestHeader('Content-Type', 'multipart/form-data');
       xhr.setRequestHeader('X-File-Name', file.fileName);
       xhr.setRequestHeader('X-File-Size', file.fileSize);
@@ -231,6 +248,9 @@ cb.Presenter = Class.extend({
   _triggerEvent: function(name) {
     $(this).trigger(name);
   },
+  undo: function() {
+    this._sendHistory('undo');
+  },
   newImage: function() {
     while (this.layers.length > 0) {
       var layer = this.layers.pop();
@@ -266,12 +286,14 @@ cb.Presenter = Class.extend({
         .append(dom_thumb)
         .append('<span>Layer ' + new_index + '</span>');
     
+    var myself = this;
+    
     $(layer).bind('updated', function() { 
       var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
-      dom_thumb.attr('src', thumb_src); 
+      dom_thumb.attr('src', thumb_src);
+      myself._sendHistory();
     });
     
-    var myself = this;
     dom_layer.bind('mousedown', function() {
       // This callback can be invoked after the index of this layer has been
       // changed by removeLayer, so we can't use new_index.
