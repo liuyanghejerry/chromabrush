@@ -20,17 +20,18 @@ cb.util = {};
 cb.util.canvas = {};
 
 cb.util.canvas.paintFill = function(canvas, x, y, color) {
+  var tolerance = 2;
+  var checked = [];
   var x0 = Math.floor(x / cb.PixelSize);
   var y0 = Math.floor(y / cb.PixelSize);
   var context = canvas.getContext('2d');
   var stack = [x0, y0];
-  ///rgba\((\d+),\w(\d+),\w\)
+
   var color_matches = /rgba\((\d{1,3}),\W(\d{1,3}),\W(\d{1,3}),\W(\d{1,3})\)/.exec(color);
   var color_r = parseInt(color_matches[1], 10);
   var color_g = parseInt(color_matches[2], 10);
   var color_b = parseInt(color_matches[3], 10);
-  var color_a = parseInt(color_matches[4], 10);
-  console.log(color);
+  var color_a = Math.round(parseFloat(color_matches[4]) * 255);
 
   // Read the image pixels into memory array and prepare a function for
   // accessing that array.
@@ -52,11 +53,16 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
   // fill.
   var seed_color = pixel(x0, y0);
   var is_open = function(x, y) {
+    if (checked[y * canvas.width + x] === true) {
+      return false;
+    }
+    
     var c = pixel(x, y);
-    return c[0] == seed_color[0] &&
-           c[1] == seed_color[1] &&
-           c[2] == seed_color[2] &&
-           c[3] == seed_color[3];
+    var status = Math.abs(c[0] - seed_color[0]) < tolerance &&
+                 Math.abs(c[1] - seed_color[1]) < tolerance &&
+                 Math.abs(c[2] - seed_color[2]) < tolerance ||
+                 c[3] != 255;
+    return status;
   };
 
   // Set the pixel color and at the same time push the pixels above and below
@@ -66,6 +72,8 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
     // surface.
     var x = bx * cb.PixelSize;
     var y = by * cb.PixelSize;
+    checked[y * canvas.width + x] = true;
+    
     var p = (x + y * canvas.width) * 4;
     var p_mod = 0;
     for (var i = 0; i < cb.PixelSize; i++) {
