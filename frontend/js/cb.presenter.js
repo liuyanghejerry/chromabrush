@@ -313,7 +313,6 @@ cb.Presenter = Class.extend({
     if (name == null) {
       this.currentbrush = null;
     } else if (this.brushes.hasOwnProperty(name)) {
-      console.log('setting current brush', name, this.brushes[name]);
       this.brush_box.find('#brush_select_' + name).css('color', 'black');
       this.currentbrush = this.brushes[name];
     } 
