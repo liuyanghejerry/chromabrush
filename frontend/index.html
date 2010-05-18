@@ -18,6 +18,8 @@
 <html>
   <head>
     <title>Chromabrush</title>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/ejohn.Class.js"></script>
@@ -29,11 +31,43 @@
     <script src="js/cb.sound.js"></script>
     <script src="js/cb.ui.js"></script>
     <script src="js/cb.filters.js"></script>
+    <script src="js/modernizr-1.1.min.js"></script>
     <link rel="stylesheet" href="css/hbox.vbox.css" />
     <link rel="stylesheet" href="css/cb.editor.css" />
     <link rel="stylesheet" href="css/cb.ui.css" />
     <script>
+      function browserSupported() {
+        if (/skipbrowsercheck=1/.test(window.location.href)) {
+          return true;
+        }
+        Modernizr.addTest('notifications',function(){
+          return window.webkitNotifications &&
+              typeof window.webkitNotifications.checkPermission == "function" ? 
+                  true : false;
+        });
+        
+        return Modernizr.fontface &&
+               Modernizr.canvas &&
+               Modernizr.audio &&
+               Modernizr.video &&
+               Modernizr.rgba &&
+               Modernizr.borderradius &&
+               Modernizr.boxshadow &&
+               Modernizr.cssanimations &&
+               Modernizr.webworkers &&
+               Modernizr.notifications;
+      };
+      
       function init() {
+        if (!browserSupported()) {
+          if ($.browser.msie) {
+            CFInstall.check({ mode: "overlay" });
+          } else {
+            $(document.body).append($('#note-browsersupport'));
+          }
+          return;
+        }
+        
         var presenter = new cb.Presenter();
         presenter.addLayer();
         
@@ -229,6 +263,28 @@
             <a href="http://www.chromabrush.com">www.chromabrush.com</a> 
           </p>
         </div>
+      </div>
+      <div id="note-browsersupport" class="">
+        <h1>Chromabrush has not been tested with your browser</h1>
+        <p>
+          Chromabrush is written using the latest HTML5 technologies, many
+          of which are not fully supported by every popular browser available
+          today.  Because this is a technical demonstration of what is possible
+          to create when using cutting-edge features, less effort has been put
+          into making the application work on all available browsers.
+        </p>
+        <p>
+          To get the full functionality of this application, we suggest you use
+          a
+          <a href="http://www.chromium.org/getting-involved/dev-channel">
+            Dev Channel release of Google Chrome</a>.  No other browser has
+          been tested with this version of Chromabrush.  
+        </p>
+        <p>
+          We hope to add additional browser support over time.  If you would 
+          like to test how Chromabrush behaves in your browser, please
+          <a href="?skipbrowsercheck=1">click here to disable this check</a>.
+        </p>
       </div>
     </div>
   </body>
