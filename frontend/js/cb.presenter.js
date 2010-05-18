@@ -109,6 +109,12 @@ cb.Presenter = Class.extend({
     this.tool_layer = new cb.Layer(this.canvas_width, this.canvas_height, 100);
     this.canvas_box.append(this.tool_layer.getCanvas());
     
+    this.history_worker = new Worker('/js/worker.history.js');
+    this.history_worker.addEventListener(
+        'message', 
+        $.proxy(this, '_onHistoryMessage'), 
+        false); 
+    
     $(this.tool_layer.getCanvas()).bind('mousedown', $.proxy(this, '_onToolMouseDown'));
     $(window).bind('mousemove', $.proxy(this, '_onToolMouseMove'));
     $(window).bind('mouseup', $.proxy(this, '_onToolMouseUp'));
@@ -116,6 +122,27 @@ cb.Presenter = Class.extend({
     $(this.tool_layer.getCanvas())
         .bind('dragover', $.proxy(this, '_onDragOver'))
         .bind('drop', $.proxy(this, '_onDrop'));
+  },
+  _onHistoryMessage: function(evt) {
+    switch (evt.data.status) {
+      case 'ready':
+        this._sendHistory();
+        break;
+    }
+  },
+  _sendHistory: function() {
+    var layer = this.getCurrentLayer();
+    var pos = layer.getPosition();
+    var size = layer.getSize();
+    this.history_worker.postMessage({
+      'action': 'sethistory',
+      'imagedata': layer.getImageData(),
+      'layerindex': this.currentlayer,
+      'x': pos.x,
+      'y': pos.y,
+      'w': size.w,
+      'h': size.h
+    });
   },
   _cleanup: function(evt) {
     
@@ -253,6 +280,11 @@ cb.Presenter = Class.extend({
     
     this.layer_box.prepend(dom_layer);
     this.selectLayer(new_index);
+    
+    if (new_index == 0) {
+      this._sendHistory();   
+    }
+
     return layer;
   },
   removeLayer: function() {
