@@ -71,11 +71,20 @@ hr {
 .menu li {
   margin: 0;
   padding: 3px 10px;
+  text-shadow: 1px 1px 1px #aaa;
 }
 .menu li:hover {
   background: #36b;
   color: #fff;
   text-shadow: none;
+}
+.menu .disabled {
+  color: #666 !important;
+  cursor: default;
+}
+.menu .disabled:hover {
+  background: transparent !important;
+  text-shadow: 1px 1px 1px #aaa;
 }
 
 .popupcontent {

@@ -27,7 +27,8 @@ cb.Presenter = Class.extend({
     this.currentbrush = null;
     this.currentbrushicon = null;
     this.currentlayer = -1;
-    this.lasthistoryupdate = null;
+    this.history_last_update = null;
+    this.history_timeout = null;
     var myself = this;
     
     $(window).bind('unload', $.proxy(this, '_cleanup'));
@@ -127,40 +128,52 @@ cb.Presenter = Class.extend({
   _onHistoryMessage: function(evt) {
     switch (evt.data.status) {
       case 'ready':
-        this._sendHistory();
         break;
       case 'undo':
         var layer = this.layers[evt.data.index];
-        layer.setPosition(evt.data.x, evt.data.y);
         layer.setImageData(evt.data.imagedata);
         $(layer).trigger('updated');
     }
+    $(this).trigger('historychanged', [
+      evt.data.length,
+      evt.data.type
+    ]);
   },
-  _sendHistory: function(action) {
+  _sendHistory: function(action, index) {
     if (!action) {
       action = 'sethistory';
     }
+    
+    if (!index) {
+      index = this.currentlayer;
+    }
+    
     var timestamp = new Date().getTime();
-    if (this.lasthistoryupdate != null && 
-        timestamp - this.lasthistoryupdate < 1000) {
+    if (this.history_last_update != null && 
+        timestamp - this.history_last_update < 200) {
       return;
     }
     
-    console.log('_sendHistory');
-    this.lasthistoryupdate = timestamp;
+    this.history_last_update = timestamp;
     
-    var layer = this.getCurrentLayer();
+    var layer = this.layers[index];
     var pos = layer.getPosition();
     var size = layer.getSize();
     this.history_worker.postMessage({
       'action': action,
       'imagedata': layer.getImageData(),
-      'index': this.currentlayer,
+      'index': index,
       'x': pos.x,
       'y': pos.y,
       'w': size.w,
       'h': size.h
     });
+  },
+  _requestSendHistory: function(action, index) {
+    if (this.history_timeout != null) {
+      clearTimeout(this.history_timeout);
+    }
+    this.history_timeout = setTimeout($.proxy(this, '_sendHistory'), 1000, action, index);
   },
   _cleanup: function(evt) {
     this.history_worker.terminate();
@@ -259,6 +272,7 @@ cb.Presenter = Class.extend({
     
     this.layer_box.find('div[layer]').remove();
     this.addLayer();
+    this._sendHistory('clearhistory');
   },
   addLayer: function(width, height) {
     if (!width) {
@@ -291,7 +305,7 @@ cb.Presenter = Class.extend({
     $(layer).bind('updated', function() { 
       var thumb_src = layer.getDataUrl(thumb_width, thumb_height);
       dom_thumb.attr('src', thumb_src);
-      myself._sendHistory();
+      myself._requestSendHistory(null, new_index);
     });
     
     dom_layer.bind('mousedown', function() {
@@ -303,10 +317,6 @@ cb.Presenter = Class.extend({
     this.layer_box.prepend(dom_layer);
     this.selectLayer(new_index);
     
-    if (new_index == 0) {
-      this._sendHistory();   
-    }
-
     return layer;
   },
   removeLayer: function() {
