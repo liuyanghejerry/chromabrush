@@ -26,6 +26,10 @@ hr {
   border-bottom: 1px solid #666;
 }
 
+.helpvideo {
+  -webkit-box-shadow: 2px 2px 4px #000;
+}
+
 #layer_box {
   min-width: 120px;
 }
@@ -165,3 +169,4 @@ hr {
   color: #000;
   text-shadow: 1px 1px 1px #aaa;
 }
+

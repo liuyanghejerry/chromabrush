@@ -116,11 +116,19 @@
           popupAbout.show();
         });
         
+        var popupHelpPaint = new cb.ui.ModalPopup('#popup-help-paint', {closeable:true});
+        $('#help-paint').click(function() {
+          var vid = $('#popup-help-paint video').get(0);
+          vid.src = "/video/help-paint.mp4";
+          popupHelpPaint.show();
+        });
+        
         var toolbar = new cb.ui.Menu();
         toolbar.addEntry('#menuitem-system', new cb.ui.PointingPopup('#menu-system'));
         toolbar.addEntry('#menuitem-file', new cb.ui.PointingPopup('#menu-file'));
         toolbar.addEntry('#menuitem-edit', new cb.ui.PointingPopup('#menu-edit'));
         toolbar.addEntry('#menuitem-filter', new cb.ui.PointingPopup('#menu-filter'));
+        toolbar.addEntry('#menuitem-help', new cb.ui.PointingPopup('#menu-help'));
         
         presenter.addToolbar(toolbar);
       };
@@ -164,6 +172,40 @@
         <ul>
           <li id="filter-notifications">Show notifications</li>
         </ul>
+      </div>
+      <span id="menuitem-help">Help</span>
+      <div id="menu-help" class="menu">
+        <ul>
+          <li id="help-paint">How to paint</li>
+        </ul>
+      </div>
+      <div id="popup-help-paint">
+        <div class="popupcontent">
+          <div class="centeredtext">
+            <video class="helpvideo" autoplay controls></video>
+          </div>
+          <h1>How to paint</h1>
+          <p>
+            Painting in Chromabrush is accomplished by selecting the 
+            <strong>paint brush tool</strong> from the toolbar on the bottom 
+            of the screen and drawing
+            on the canvas in the middle of the screen.
+          </p>
+          <p>
+            Select <strong>colors and brush thicknesses</strong> from the color 
+            and size controls
+            on the left hand side of the screen.
+          </p>
+          <p>
+            To draw <strong>straight lines</strong>, select the 
+            <strong>line tool</strong> from 
+            the toolbar on 
+            the bottom of the screen.  Click once on the canvas to start a line
+            and click again to draw.  If you hold down shift for your second
+            click, a new line will be started from the endpoint of the line
+            you just drew.
+          </p>
+        </div>
       </div>
       <div id="popup-about">
         <div class="popupcontent">
