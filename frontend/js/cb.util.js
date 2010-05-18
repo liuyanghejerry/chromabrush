@@ -20,7 +20,7 @@ cb.util = {};
 cb.util.canvas = {};
 
 cb.util.canvas.paintFill = function(canvas, x, y, color) {
-  var tolerance = 2;
+  var tolerance = 30;
   var checked = [];
   var x0 = Math.floor(x / cb.PixelSize);
   var y0 = Math.floor(y / cb.PixelSize);
@@ -61,7 +61,7 @@ cb.util.canvas.paintFill = function(canvas, x, y, color) {
     var status = Math.abs(c[0] - seed_color[0]) < tolerance &&
                  Math.abs(c[1] - seed_color[1]) < tolerance &&
                  Math.abs(c[2] - seed_color[2]) < tolerance ||
-                 c[3] != 255;
+                 c[3] <= 250;
     return status;
   };
 
