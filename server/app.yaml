@@ -37,4 +37,3 @@ handlers:
 
 - url: /
   script: server.py
-  login: admin
