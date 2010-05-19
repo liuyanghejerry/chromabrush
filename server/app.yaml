@@ -31,6 +31,10 @@ handlers:
   static_dir: frontend/video
   expiration: "7d"
 
+- url: /favicon.ico
+  static_files: frontend/img/favicon.png
+  upload: frontend/img/favicon.png
+
 - url: /
   script: server.py
   login: admin
