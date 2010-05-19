@@ -61,7 +61,7 @@ cb.ui.Popup = Class.extend({
     this._dom_wrap.addClass(cb.ui.CLASS_HIDDEN);
     this._hidden = true;
     $(this).trigger('hidepopup');
-  },
+  }
 });
 
 cb.ui.ModalPopup = cb.ui.Popup.extend({
