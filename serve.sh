@@ -1,2 +1,2 @@
 python build.py
-dev_appserver --port 9999 build
+dev_appserver.py --port 9999 build
