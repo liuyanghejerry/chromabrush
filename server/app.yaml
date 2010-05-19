@@ -13,21 +13,23 @@ handlers:
 - url: /audio/
   static_dir: frontend/audio
   mime_type: audio/ogg
-  expiration: "6h"
+  expiration: "7d"
   
 - url: /css/
   static_dir: frontend/css
+  expiration: "7d"
 
 - url: /js/
   static_dir: frontend/js
+  expiration: "7d"
 
 - url: /img/
   static_dir: frontend/img
-  expiration: "6h"
+  expiration: "7d"
 
 - url: /video/
   static_dir: frontend/video
-  expiration: "6h"
+  expiration: "7d"
 
 - url: /
   script: server.py
