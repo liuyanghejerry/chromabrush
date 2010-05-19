@@ -46,8 +46,9 @@
                   true : false;
         });
         
-        return Modernizr.fontface &&
-               Modernizr.canvas &&
+        // Note: Modernizr.fontface unreliable on webkit
+        
+        return Modernizr.canvas &&
                Modernizr.audio &&
                Modernizr.video &&
                Modernizr.rgba &&
