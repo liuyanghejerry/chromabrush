@@ -1,0 +1,7 @@
+run_server.sh
+deploy_corp.sh
+nacl/
+.DS_Store
+build/
+.pyc
+tmp/
